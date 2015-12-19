@@ -22,7 +22,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$result = mysqli_query($conn, "SELECT * FROM Posts WHERE id > ".$_GET['start_id']." LIMIT ".$_GET['number']);
+$result = mysqli_query($conn, "SELECT id, title, content, author, date FROM Posts WHERE id > ".$_GET['start_id']." LIMIT ".$_GET['number']);
 
 $response = array();
 while($row = $result->fetch_array(MYSQL_ASSOC)) {

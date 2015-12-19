@@ -6,6 +6,7 @@ window.onload = function() {
     }
 
     on_hash_change();
+    load_posts(0, 10);
 };
 
 function open_page(page_div_id) {
@@ -143,6 +144,45 @@ function on_hash_change() {
         }
     } else {
         open_page("home_page");
+    }
+}
+
+function load_posts(start_id, number) {
+    var new_posts = get_posts(start_id, number);
+    var blog_page = select("id", "blog_page");
+
+    for (var i in new_posts) {
+        var post_div = document.createElement('div');
+        post_div.className = "post";
+        post_div.id = "post_" + new_posts[i].id;
+        blog_page.js_object.appendChild(post_div);
+
+        var title_div = document.createElement('div');
+        title_div.className = "post_title";
+        title_div.innerHTML = new_posts[i].title;
+        post_div.appendChild(title_div);
+
+        var content_div = document.createElement('div');
+        content_div.className = "post_content";
+        content_div.innerHTML = new_posts[i].content;
+        post_div.appendChild(content_div);
+
+        var author_div = document.createElement('div');
+        author_div.className = "post_author";
+        author_div.innerHTML = new_posts[i].author;
+        post_div.appendChild(author_div);
+
+        var date_div = document.createElement('div');
+        date_div.className = "post_date";
+        date_div.innerHTML = new_posts[i].date;
+        post_div.appendChild(date_div);
+    }
+
+    if (new_posts.length < number) {
+        post_div = document.createElement('div');
+        post_div.id = "no_more_posts";
+        post_div.innerHTML = "No more posts.";
+        blog_page.js_object.appendChild(post_div);
     }
 }
 
