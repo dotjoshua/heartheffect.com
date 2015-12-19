@@ -147,5 +147,8 @@ function on_hash_change() {
 }
 
 function get_posts(start_id, number) {
-    //TODO
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "utilities/get_posts.php?start_id=" + start_id + "&number=" + number, false);
+    xhttp.send();
+    return JSON.parse(xhttp.responseText);
 }
