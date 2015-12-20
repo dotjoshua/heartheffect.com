@@ -192,3 +192,10 @@ function get_posts(start_id, number) {
     xhttp.send();
     return JSON.parse(xhttp.responseText);
 }
+
+function search_posts(query) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "utilities/search_posts.php?query=" + query, false);
+    xhttp.send();
+    return JSON.parse(xhttp.responseText);
+}
