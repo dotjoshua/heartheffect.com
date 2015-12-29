@@ -1,0 +1,2 @@
+<?php
+$PASSWD_HASH = "78b13c80d8fdacdb876bdc14d57b9d8419830b004bf06aef2662c42bfc9b6a4e";

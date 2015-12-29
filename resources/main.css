@@ -1,0 +1,22 @@
+body {
+    background: #182032;
+    font-family: AktivGroteskStd, sans-serif;
+    color: #602B24;
+}
+
+.page {
+    -webkit-transition: opacity 0.5s;
+    -moz-transition: opacity 0.5s;
+    -ms-transition: opacity 0.5s;
+    -o-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+}
+
+.post, #no_more_posts {
+    margin: 10px auto;
+    padding: 10px;
+    background: #E6E3E1;
+    width: 100%;
+    max-width: 1000px;
+    box-sizing: border-box;
+}
