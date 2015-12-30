@@ -1,7 +1,10 @@
 var auth = null;
 
 window.onload = function() {
+
+    //debug:
     get_editor("IronMan");
+    
     select("id", "login_field").js_object.addEventListener("keypress", function(e) {
         if (e.keyCode == 13) {
             get_editor(select("id", "login_field").js_object.value);
@@ -44,6 +47,7 @@ function move_divider(e) {
         var middle_percent = (e.pageY / window.innerHeight) * 100;
         select("id", "divider").js_object.setAttribute("style", "top: " + middle_percent + "%");
         select("id", "code_window").js_object.setAttribute("style", "height: " + middle_percent + "%");
-        select("id", "preview_window").js_object.setAttribute("style", "top: " + middle_percent + "%; height: " + (100- middle_percent) + "%");
+        select("id", "preview_window").js_object.setAttribute("style",
+            "top: " + middle_percent + "%; height: " + (100- middle_percent) + "%");
     }
 }
