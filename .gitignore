@@ -2,3 +2,5 @@
 .idea/*
 
 utilities/auth.php
+
+admin/lib/*
