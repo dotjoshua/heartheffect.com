@@ -18,12 +18,72 @@ body {
     transition: opacity 0.5s;
 }
 
+#editor {
+    height: 100%;
+    width: 100%;
+}
+
+#menu_bar {
+    background: #222;
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+#code_window {
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-top: 50px;
+    background: #333;
+    box-sizing: border-box;
+}
+
+#divider {
+    content: "";
+    width: 100%;
+    height: 2px;
+    margin-top: -1px;
+    background: #999;
+    position: fixed;
+    top: 50%;
+    cursor: ns-resize;
+    z-index: 100;
+}
+
+#preview_window {
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    background: #444;
+}
+
 #logo {
     background: url(../../resources/logo.png) no-repeat center;
     background-size: contain;
     width: 200px;
     height: 200px;
 }
+
+#logo:before {
+    content: "";
+    position: absolute;
+    margin-top: -600px;
+    margin-left: -600px;
+    width: 1400px;
+    height: 1400px;
+    background: radial-gradient(circle, rgba(187, 87, 13, 1), rgba(40, 40, 40, 0), rgba(0, 0, 0, 0));
+    z-index: -50;
+    opacity: 0.15;
+}
+
 
 #login_field {
     background: #333;
