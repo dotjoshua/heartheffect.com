@@ -4,7 +4,7 @@ window.onload = function() {
 
     //debug:
     get_editor("IronMan");
-    
+
     select("id", "login_field").js_object.addEventListener("keypress", function(e) {
         if (e.keyCode == 13) {
             get_editor(select("id", "login_field").js_object.value);
@@ -20,6 +20,14 @@ function on_editor_load() {
             window.removeEventListener("mousemove", move_divider);
         });
     });
+
+    var editor = CodeMirror.fromTextArea(select("id", "editor_textarea").js_object, {
+        lineNumbers: true,
+        styleActiveLine: true,
+        matchBrackets: true
+    });
+    editor.setOption("theme", "lesser-dark");
+    editor.setSize("100%", "100%");
 }
 
 function get_editor(password) {
