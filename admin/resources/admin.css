@@ -18,6 +18,23 @@ select {
     border: 8px solid #333;
 }
 
+input {
+    -webkit-appearance: none;
+    border: 1px solid #555;
+    background: #333;
+    height: 30px;
+    padding: 5px;
+    box-sizing: border-box;
+    margin: 0;
+    line-height: 14px;
+    color: #fff;
+}
+
+.locked_select {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
 #content {
     height: 100%;
     width: 100%;
