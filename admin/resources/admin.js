@@ -1,4 +1,5 @@
 var auth = null;
+var editor = null;
 
 window.onload = function() {
 
@@ -21,14 +22,60 @@ function on_editor_load() {
         });
     });
 
-    var editor = CodeMirror.fromTextArea(select("id", "editor_textarea").js_object, {
+    editor = CodeMirror.fromTextArea(select("id", "editor_textarea").js_object, {
         lineNumbers: true,
         styleActiveLine: true,
         matchBrackets: true
     });
     editor.setOption("theme", "lesser-dark");
     editor.setSize("100%", "100%");
+
+    select("id", "action_select").js_object.addEventListener("change", function(e) {
+        if (e.target.value == "edit_post") {
+            if (editor.getValue() != "") {
+                alert("You have unpublished changes. Are you sure you want to continue?",
+                    "Ah!",
+                    "Yes, I'm sure.",
+                    true,
+                    function() {
+                        update_editor_context(e.target.value);
+                        close_alert();
+                    },
+                    function() {
+                        e.target.value = "new_post";
+                        update_editor_context(e.target.value);
+                        close_alert();
+                    }
+                );
+            } else {
+                update_editor_context(e.target.value);
+            }
+        } else {
+            update_editor_context(e.target.value);
+        }
+    });
 }
+
+function update_editor_context(value) {
+    var toggle_on_edit_divs = select("class", "toggle_on_edit");
+    for (var i = 0; i < toggle_on_edit_divs.length; i++) {
+        if (value == "edit_post") {
+            toggle_on_edit_divs[i].remove_class("display_none");
+        } else {
+            toggle_on_edit_divs[i].add_class("display_none");
+        }
+    }
+
+    var lock_on_edit_divs = select("class", "lock_on_edit");
+    for (i = 0; i < lock_on_edit_divs.length; i++) {
+        if (value == "edit_post") {
+            lock_on_edit_divs[i].add_class("locked_select");
+        } else {
+            lock_on_edit_divs[i].remove_class("locked_select");
+        }
+    }
+}
+
 
 function get_editor(password) {
     var xhttp = new XMLHttpRequest();

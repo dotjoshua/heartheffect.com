@@ -19,6 +19,7 @@ body, html {
     -ms-transition: opacity 0.5s;
     -o-transition: opacity 0.5s;
     transition: opacity 0.5s;
+    z-index: 1000;
 }
 
 #alert_window {

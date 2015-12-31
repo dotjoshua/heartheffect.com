@@ -43,8 +43,8 @@ function select(method, selector) {
         var elements = [];
         var js_objects = document.getElementsByClassName(selector);
 
-        for (var i in js_objects) {
-            elements.push(ƪ(js_objects[i]));
+        for (var i = 0; i < js_objects.length; i++) {
+            elements.push(new ƪ(js_objects[i]));
         }
 
         return elements;
