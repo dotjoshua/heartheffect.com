@@ -5,6 +5,19 @@ body {
     overflow: hidden;
 }
 
+select {
+    -webkit-appearance: none;
+    height: 30px;
+    padding-right: 20px;
+    box-sizing: border-box;
+    border-radius: 0;
+    color: #fff;
+    background: #333 url(../resources/down.png) right center no-repeat;
+    background-size: 10px;
+    margin: 0;
+    border: 8px solid #333;
+}
+
 #content {
     height: 100%;
     width: 100%;
@@ -33,6 +46,8 @@ body {
     left: 0;
     z-index: 100;
     border-bottom: 1px solid #aaa;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 #code_window {
@@ -45,6 +60,10 @@ body {
     background: #333;
     box-sizing: border-box;
     overflow: scroll;
+}
+
+.CodeMirror-gutters {
+    border-right: none !important;
 }
 
 #divider {
