@@ -10,8 +10,10 @@ $_POST = json_decode($rest_json, true);
 if (hash("sha256", $_POST["auth"]) != $PASSWD_HASH) {
     echo "auth_error";
 } else {
-    echo query("UPDATE Posts SET title='".$_POST["title"]
-        ."', content='".$_POST["content"]
-        ."', author='".$_POST["author"]
-        ."' WHERE id=".$_POST["post_id"], $DB_PASSWD, true);
+    echo query("INSERT INTO Posts (title, content, date, author, category, tags) VALUES('"
+        .$_POST["title"]."', '"
+        .$_POST["content"]."', '"
+        .$_POST["date"]."', '"
+        .$_POST["author"]
+        ."', '', '')", $DB_PASSWD, false);
 }

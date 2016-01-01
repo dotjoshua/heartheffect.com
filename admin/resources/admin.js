@@ -60,9 +60,12 @@ function on_editor_load() {
     select("id", "action_button").js_object.addEventListener("click", function() {
         if (select("id", "action_select").js_object.value == "edit_post") {
             update_current_post();
+        } else {
+            create_new_post();
         }
     });
 
+    update_editor_context();
 }
 
 function get_selected_post() {
@@ -112,6 +115,11 @@ function update_editor_context(value) {
 
         select("id", "action_button").js_object.innerHTML = "update";
     } else {
+        editor.setValue("");
+        select("id", "title_input").js_object.value = "";
+        select("id", "month_select").js_object.value = new Date().getMonth() + 1;
+        select("id", "day_select").js_object.value = new Date().getDate();
+        select("id", "year_select").js_object.value = new Date().getFullYear();
         select("id", "action_button").js_object.innerHTML = "publish";
     }
 }
@@ -125,7 +133,28 @@ function update_current_post() {
             "author": select("id", "author_select").js_object.value,
             "content": editor.getValue()
         }, false);
-        close_alert();
+        alert("Your changes are now live.", "Success!");
+    });
+}
+
+function create_new_post() {
+    alert("Are you sure you want to publish this post?", "Just making sure...", "yes", true, function() {
+        var date = select("id", "year_select").js_object.value
+            + "-" + select("id", "month_select").js_object.value
+            + "-" + select("id", "day_select").js_object.value;
+
+        post("utilities/create_post.php", {
+            "auth": auth,
+            "title": select("id", "title_input").js_object.value,
+            "author": select("id", "author_select").js_object.value,
+            "date": date,
+            "content": editor.getValue()
+        }, false);
+
+        select("id", "action_select").js_object.value = "edit_post";
+        update_editor_context("edit_post");
+
+        alert("Your changes are now live.", "Success!");
     });
 }
 
