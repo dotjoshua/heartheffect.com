@@ -71,7 +71,7 @@ function on_editor_load() {
 function get_selected_post() {
     var post = get_posts(select("id", "post_select").js_object.value - 1, 1)[0];
     var date_info = post.date.split(" ")[0].split("-");
-
+    console.log(date_info);
     select("id", "year_select").js_object.value = date_info[0];
     select("id", "month_select").js_object.value = date_info[1];
     select("id", "day_select").js_object.value = date_info[2];
@@ -117,14 +117,16 @@ function update_editor_context(value) {
     } else {
         editor.setValue("");
         select("id", "title_input").js_object.value = "";
-        select("id", "month_select").js_object.value = new Date().getMonth() + 1;
-        select("id", "day_select").js_object.value = new Date().getDate();
+        select("id", "month_select").js_object.value = ("0" + new Date().getMonth() + 1).slice(-2);
+        select("id", "day_select").js_object.value = ("0" + new Date().getDate()).slice(-2);
         select("id", "year_select").js_object.value = new Date().getFullYear();
         select("id", "action_button").js_object.innerHTML = "publish";
     }
 }
 
 function update_current_post() {
+    if (!is_ready()) return;
+
     alert("Are you sure you want to save changes?", "Just making sure...", "yes", true, function() {
         post("utilities/update_post.php", {
             "auth": auth,
@@ -138,6 +140,8 @@ function update_current_post() {
 }
 
 function create_new_post() {
+    if (!is_ready()) return;
+
     alert("Are you sure you want to publish this post?", "Just making sure...", "yes", true, function() {
         var date = select("id", "year_select").js_object.value
             + "-" + select("id", "month_select").js_object.value
@@ -156,6 +160,35 @@ function create_new_post() {
 
         alert("Your changes are now live.", "Success!");
     });
+}
+
+function is_ready() {
+    var items_to_fix = document.createElement("ul");
+
+    if (select("id", "author_select").js_object.value == "") {
+        var item = document.createElement("li");
+        item.innerHTML = "'author' is unselected";
+        items_to_fix.appendChild(item);
+    }
+
+    if (select("id", "title_input").js_object.value == "") {
+        item = document.createElement("li");
+        item.innerHTML = "'post title' is empty";
+        items_to_fix.appendChild(item);
+    }
+
+    if (editor.getValue() == "") {
+        item = document.createElement("li");
+        item.innerHTML = "there is no content";
+        items_to_fix.appendChild(item);
+    }
+
+
+    if (items_to_fix.childElementCount == 0) {
+        return true;
+    } else {
+        alert(items_to_fix.outerHTML, "Hold up...");
+    }
 }
 
 function get_posts_info() {

@@ -66,6 +66,11 @@ body, html {
     display: None !important;
 }
 
+.blurred {
+    filter: blur(5px);
+    -webkit-filter: blur(5px);
+}
+
 @media screen and (max-width: 600px) {
     .alert_button {
         cursor: pointer;

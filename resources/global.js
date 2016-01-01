@@ -24,6 +24,8 @@ function alert(message, title, button, cancel, button_callback, cancel_callback)
 
     select("id", "alert_button").js_object.onclick = button_callback;
     select("id", "alert_cancel").js_object.onclick = cancel_callback;
+
+    select("id", "content").add_class("blurred");
 }
 
 function close_alert() {
@@ -31,6 +33,8 @@ function close_alert() {
     setTimeout(function() {
         select("id", "alert_container").add_class("display_none");
     }, 500);
+
+    select("id", "content").remove_class("blurred");
 }
 
 function select(method, selector) {
