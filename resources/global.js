@@ -70,3 +70,41 @@ function ƪ(js_object) {
     };
     return this;
 }
+
+function get(url, data, json_parse) {
+    if (json_parse == undefined) json_parse = true;
+
+    var param_string =  "?";
+    var prefix = "";
+    for (var property in data) {
+        if (data.hasOwnProperty(property)) {
+            param_string += prefix + property + "=" + encodeURIComponent(data[property]);
+        }
+        prefix = "&";
+    }
+
+    var request = new XMLHttpRequest();
+    request.open("GET", url + param_string, false);
+    request.send();
+
+    if (json_parse) {
+        return JSON.parse(request.responseText);
+    } else {
+        return request.responseText;
+    }
+}
+
+function post(url, data, json_parse) {
+    if (json_parse == undefined) json_parse = true;
+
+    var request = new XMLHttpRequest();
+    request.open("POST", url, false);
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    request.send(JSON.stringify(data));
+
+    if (json_parse) {
+        return JSON.parse(request.responseText);
+    } else {
+        return request.responseText;
+    }
+}

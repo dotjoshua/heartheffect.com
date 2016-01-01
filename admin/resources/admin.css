@@ -16,6 +16,7 @@ select {
     background-size: 10px;
     margin: 0;
     border: 8px solid #333;
+    cursor: pointer;
 }
 
 input {
@@ -28,6 +29,19 @@ input {
     margin: 0;
     line-height: 14px;
     color: #fff;
+}
+
+button {
+    -webkit-appearance: none;
+    border: none;
+    background: #333;
+    height: 30px;
+    padding: 10px;
+    box-sizing: border-box;
+    line-height: 0px;
+    color: #fff;
+    cursor: pointer;
+    float: right;
 }
 
 .locked_select {

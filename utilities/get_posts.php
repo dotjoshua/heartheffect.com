@@ -13,4 +13,4 @@ if (!is_numeric($_GET["number"])) {
     exit;
 }
 
-echo query("SELECT id, title, content, author, date FROM Posts WHERE id > ".$_GET['start_id']." LIMIT ".$_GET['number']."", $DB_PASSWD);
+echo query("SELECT id, title, content, author, date FROM Posts WHERE id > ".$_GET['start_id']." LIMIT ".$_GET['number']."", $DB_PASSWD, false);

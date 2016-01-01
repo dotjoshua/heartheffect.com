@@ -54,6 +54,26 @@ function on_editor_load() {
             update_editor_context(e.target.value);
         }
     });
+
+    select("id", "post_select").js_object.addEventListener("change", get_selected_post);
+
+    select("id", "action_button").js_object.addEventListener("click", function() {
+        if (select("id", "action_select").js_object.value == "edit_post") {
+            update_current_post();
+        }
+    });
+
+}
+
+function get_selected_post() {
+    var post = get_posts(select("id", "post_select").js_object.value - 1, 1)[0];
+    var date_info = post.date.split(" ")[0].split("-");
+
+    select("id", "year_select").js_object.value = date_info[0];
+    select("id", "month_select").js_object.value = date_info[1];
+    select("id", "day_select").js_object.value = date_info[2];
+    select("id", "title_input").js_object.value = post.title;
+    editor.setValue(post.content);
 }
 
 function update_editor_context(value) {
@@ -74,8 +94,48 @@ function update_editor_context(value) {
             lock_on_edit_divs[i].remove_class("locked_select");
         }
     }
+
+    if (value == "edit_post") {
+        var post_select = select("id", "post_select");
+        var posts = get_posts_info();
+
+        post_select.js_object.innerHTML = "";
+
+        for (i = 0; i < posts.length; i++) {
+            var new_option = document.createElement("option");
+            new_option.setAttribute("value", posts[i].id);
+            new_option.innerHTML = posts[i].title;
+            post_select.js_object.appendChild(new_option);
+        }
+
+        get_selected_post();
+
+        select("id", "action_button").js_object.innerHTML = "update";
+    } else {
+        select("id", "action_button").js_object.innerHTML = "publish";
+    }
 }
 
+function update_current_post() {
+    alert("Are you sure you want to save changes?", "Just making sure...", "yes", true, function() {
+        post("utilities/update_post.php", {
+            "auth": auth,
+            "post_id": select("id", "post_select").js_object.value,
+            "title": select("id", "title_input").js_object.value,
+            "author": select("id", "author_select").js_object.value,
+            "content": editor.getValue()
+        }, false);
+        close_alert();
+    });
+}
+
+function get_posts_info() {
+    return get("utilities/get_posts_info.php", {});
+}
+
+function get_posts(start_id, number) {
+    return get("../utilities/get_posts.php", {"start_id": start_id, "number": number});
+}
 
 function get_editor(password) {
     var xhttp = new XMLHttpRequest();

@@ -1,6 +1,6 @@
 <?php
 
-function query($sql, $db_passwd) {
+function query($sql, $db_passwd, $no_response) {
     $servername = "localhost";
     $username = "ruffles_joshua";
     $db_name = "ruffles_hearth_effect";
@@ -12,6 +12,7 @@ function query($sql, $db_passwd) {
     }
 
     $result = mysqli_query($conn, $sql);
+    if ($no_response) return "";
 
     $response = array();
     while($row = $result->fetch_array(MYSQL_ASSOC)) {

@@ -48,10 +48,7 @@ function load_pages() {
 }
 
 function get_pages() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "utilities/get_pages.php", false);
-    xhttp.send();
-    var response = JSON.parse(xhttp.responseText);
+    var response = get("utilities/get_pages.php", {});
 
     var pages = [];
     for (var key in response) {
@@ -105,17 +102,11 @@ function load_posts(start_id, number) {
 }
 
 function get_posts(start_id, number) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "utilities/get_posts.php?start_id=" + start_id + "&number=" + number, false);
-    xhttp.send();
-    return JSON.parse(xhttp.responseText);
+    return get("utilities/get_posts.php", {"start_id": start_id, "number": number});
 }
 
 function search_posts(query) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "utilities/search_posts.php?query=" + query, false);
-    xhttp.send();
-    return JSON.parse(xhttp.responseText);
+    return get("utilities/search_posts.php", {"query": query});
 }
 
 function on_hash_change() {
