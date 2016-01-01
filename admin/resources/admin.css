@@ -44,11 +44,6 @@ button {
     float: right;
 }
 
-.locked_select {
-    pointer-events: none;
-    opacity: 0.5;
-}
-
 #content {
     height: 100%;
     width: 100%;
@@ -79,6 +74,10 @@ button {
     border-bottom: 1px solid #aaa;
     padding: 10px;
     box-sizing: border-box;
+}
+
+#delete_button {
+    border: 1px solid #a00;
 }
 
 #code_window {
@@ -153,4 +152,9 @@ button {
     cursor: pointer;
     padding-left: 10px;
     font-size: 12px;
+}
+
+.locked_select {
+    pointer-events: none;
+    opacity: 0.5;
 }

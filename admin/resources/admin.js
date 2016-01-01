@@ -56,6 +56,7 @@ function on_editor_load() {
     });
 
     select("id", "post_select").js_object.addEventListener("change", get_selected_post);
+    select("id", "delete_button").js_object.addEventListener("click", delete_current_post);
 
     select("id", "action_button").js_object.addEventListener("click", function() {
         if (select("id", "action_select").js_object.value == "edit_post") {
@@ -71,7 +72,7 @@ function on_editor_load() {
 function get_selected_post() {
     var post = get_posts(select("id", "post_select").js_object.value - 1, 1)[0];
     var date_info = post.date.split(" ")[0].split("-");
-    console.log(date_info);
+
     select("id", "year_select").js_object.value = date_info[0];
     select("id", "month_select").js_object.value = date_info[1];
     select("id", "day_select").js_object.value = date_info[2];
@@ -159,6 +160,17 @@ function create_new_post() {
         update_editor_context("edit_post");
 
         alert("Your changes are now live.", "Success!");
+    });
+}
+
+function delete_current_post() {
+    alert("Are you sure you want to delete this post? This cannot be undone.", "Ah!", "yes, delete this post", true, function() {
+        post("utilities/delete_post.php", {
+            "auth": auth,
+            "post_id": select("id", "post_select").js_object.value
+        }, false);
+        update_editor_context("edit_post");
+        alert("The post has been deleted.", "Success!");
     });
 }
 
