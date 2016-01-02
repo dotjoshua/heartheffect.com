@@ -77,6 +77,9 @@ function get_selected_post() {
     select("id", "month_select").js_object.value = date_info[1];
     select("id", "day_select").js_object.value = date_info[2];
     select("id", "title_input").js_object.value = post.title;
+    select("id", "author_select").js_object.value = post.author;
+    select("id", "category_select").js_object.value = post.category;
+    select("id", "tags_input").js_object.value = post.tags;
     editor.setValue(post.content);
 }
 
@@ -121,6 +124,9 @@ function update_editor_context(value) {
         select("id", "month_select").js_object.value = ("0" + new Date().getMonth() + 1).slice(-2);
         select("id", "day_select").js_object.value = ("0" + new Date().getDate()).slice(-2);
         select("id", "year_select").js_object.value = new Date().getFullYear();
+        select("id", "author_select").js_object.value = "";
+        select("id", "tags_input").js_object.value = "";
+        select("id", "category_select").js_object.value = "";
         select("id", "action_button").js_object.innerHTML = "publish";
     }
 }
@@ -134,6 +140,8 @@ function update_current_post() {
             "post_id": select("id", "post_select").js_object.value,
             "title": select("id", "title_input").js_object.value,
             "author": select("id", "author_select").js_object.value,
+            "category": select("id", "category_select").js_object.value,
+            "tags": select("id", "tags_input").js_object.value,
             "content": editor.getValue()
         }, false);
         alert("Your changes are now live.", "Success!");
@@ -152,6 +160,8 @@ function create_new_post() {
             "auth": auth,
             "title": select("id", "title_input").js_object.value,
             "author": select("id", "author_select").js_object.value,
+            "category": select("id", "category_select").js_object.value,
+            "tags": select("id", "tags_input").js_object.value,
             "date": date,
             "content": editor.getValue()
         }, false);

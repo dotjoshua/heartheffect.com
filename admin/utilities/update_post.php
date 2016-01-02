@@ -13,5 +13,7 @@ if (hash("sha256", $_POST["auth"]) != $PASSWD_HASH) {
     echo query("UPDATE Posts SET title='".$_POST["title"]
         ."', content='".$_POST["content"]
         ."', author='".$_POST["author"]
+        ."', category='".$_POST["category"]
+        ."', tags='".$_POST["tags"]
         ."' WHERE id=".$_POST["post_id"], $DB_PASSWD, true);
 }
