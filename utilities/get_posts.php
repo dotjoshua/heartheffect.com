@@ -3,14 +3,6 @@
 require "database.php";
 require "auth.php";
 
-if (!is_numeric($_GET["start_id"])) {
-    echo "Invalid start_id";
-    exit;
-}
+$date = preg_replace("/[^a-zA-Z0-9-]+/", "", $_GET["date"]);
 
-if (!is_numeric($_GET["number"])) {
-    echo "Invalid number";
-    exit;
-}
-
-echo query("SELECT * FROM Posts WHERE id > ".$_GET['start_id']." LIMIT ".$_GET['number']."", $DB_PASSWD, false);
+echo query("SELECT id, title, date from posts WHERE date = (SELECT date FROM (SELECT * from posts ORDER BY date DESC) as all_posts WHERE date < DATE('".$date."') LIMIT 1)", $DB_PASSWD, false);

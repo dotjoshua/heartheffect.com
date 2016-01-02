@@ -223,8 +223,8 @@ function get_posts_info() {
     return get("utilities/get_posts_info.php", {});
 }
 
-function get_posts(start_id, number) {
-    return get("../utilities/get_posts.php", {"start_id": start_id, "number": number});
+function get_posts(date) {
+    return get("../utilities/get_posts.php", {"date": date});
 }
 
 function get_editor(password) {

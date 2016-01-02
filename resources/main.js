@@ -6,7 +6,7 @@ window.onload = function() {
     }
 
     on_hash_change();
-    load_posts(0, 10);
+    load_posts("2017-01-01");
 };
 
 function open_page(page_div_id) {
@@ -62,8 +62,8 @@ function get_pages() {
     return pages;
 }
 
-function load_posts(start_id, number) {
-    var new_posts = get_posts(start_id, number);
+function load_posts(date) {
+    var new_posts = get_posts(date);
     var blog_page = select("id", "blog_page");
 
     for (var i in new_posts) {
@@ -93,7 +93,7 @@ function load_posts(start_id, number) {
         post_div.appendChild(date_div);
     }
 
-    if (new_posts.length < number) {
+    if (new_posts.length == 0) {
         post_div = document.createElement('div');
         post_div.id = "no_more_posts";
         post_div.innerHTML = "No more posts.";
@@ -101,8 +101,9 @@ function load_posts(start_id, number) {
     }
 }
 
-function get_posts(start_id, number) {
-    return get("utilities/get_posts.php", {"start_id": start_id, "number": number});
+function get_posts(date) {
+    console.log(date);
+    return get("utilities/get_posts.php", {"date": date});
 }
 
 function search_posts(query) {
