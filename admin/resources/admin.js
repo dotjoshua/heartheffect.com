@@ -135,6 +135,10 @@ function update_current_post() {
     if (!is_ready()) return;
 
     alert("Are you sure you want to save changes?", "Just making sure...", "yes", true, function() {
+        var date = select("id", "year_select").js_object.value
+            + "-" + select("id", "month_select").js_object.value
+            + "-" + select("id", "day_select").js_object.value;
+
         post("utilities/update_post.php", {
             "auth": auth,
             "post_id": select("id", "post_select").js_object.value,
@@ -142,6 +146,7 @@ function update_current_post() {
             "author": select("id", "author_select").js_object.value,
             "category": select("id", "category_select").js_object.value,
             "tags": select("id", "tags_input").js_object.value,
+            "date": date,
             "content": editor.getValue()
         }, false);
         alert("Your changes are now live.", "Success!");
@@ -174,7 +179,8 @@ function create_new_post() {
 }
 
 function delete_current_post() {
-    alert("Are you sure you want to delete this post? This cannot be undone.", "Ah!", "yes, delete this post", true, function() {
+    alert("Are you sure you want to delete this post? This cannot be undone.",
+            "Ah!", "yes, delete this post", true, function() {
         post("utilities/delete_post.php", {
             "auth": auth,
             "post_id": select("id", "post_select").js_object.value

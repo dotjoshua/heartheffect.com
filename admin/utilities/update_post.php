@@ -15,5 +15,6 @@ if (hash("sha256", $_POST["auth"]) != $PASSWD_HASH) {
         ."', author='".$_POST["author"]
         ."', category='".$_POST["category"]
         ."', tags='".$_POST["tags"]
+        ."', date='".$_POST["date"]
         ."' WHERE id=".$_POST["post_id"], $DB_PASSWD, true);
 }
