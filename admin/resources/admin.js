@@ -70,7 +70,7 @@ function on_editor_load() {
 }
 
 function get_selected_post() {
-    var post = get_posts(select("id", "post_select").js_object.value - 1, 1)[0];
+    var post = get_post_by_id(select("id", "post_select").js_object.value)[0];
     var date_info = post.date.split(" ")[0].split("-");
 
     select("id", "year_select").js_object.value = date_info[0];
@@ -223,8 +223,8 @@ function get_posts_info() {
     return get("utilities/get_posts_info.php", {});
 }
 
-function get_posts(date) {
-    return get("../utilities/get_posts.php", {"date": date});
+function get_post_by_id(post_id) {
+    return get("utilities/get_post_by_id.php", {"post_id": post_id});
 }
 
 function get_editor(password) {
