@@ -1,14 +1,21 @@
 <?php
 
-require "../../utilities/database.php";
-require "../../utilities/auth.php";
-require "auth.php";
+require_once "../../utilities/database.php";
+require_once "../../utilities/auth.php";
+require_once "auth.php";
+require_once "database.php";
 
 $rest_json = file_get_contents("php://input");
 $_POST = json_decode($rest_json, true);
 
-if (hash("sha256", $_POST["auth"]) != $PASSWD_HASH) {
-    echo "auth_error";
+$token = check_auth_token($_POST["token"], $DB_PASSWD);
+
+if ($token) {
+    $response = array(
+        "response" => query("DELETE FROM posts WHERE id=".$_POST['post_id'], $DB_PASSWD, true),
+        "token" => $token
+    );
+    echo json_encode($response);
 } else {
-    echo query("DELETE FROM posts WHERE id=".$_POST['post_id'], $DB_PASSWD, false);
+    echo json_encode(array("error" => "Authentication error."));
 }

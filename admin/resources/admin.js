@@ -1,5 +1,5 @@
-var auth = null;
 var editor = null;
+var token = false;
 
 window.onload = function() {
 
@@ -139,8 +139,8 @@ function update_current_post() {
             + "-" + select("id", "month_select").js_object.value
             + "-" + select("id", "day_select").js_object.value;
 
-        post("utilities/update_post.php", {
-            "auth": auth,
+        var response = post("utilities/update_post.php", {
+            "token": token,
             "post_id": select("id", "post_select").js_object.value,
             "title": select("id", "title_input").js_object.value,
             "author": select("id", "author_select").js_object.value,
@@ -148,8 +148,14 @@ function update_current_post() {
             "tags": select("id", "tags_input").js_object.value,
             "date": date,
             "content": editor.getValue()
-        }, false);
-        alert("Your changes are now live.", "Success!");
+        }, true);
+
+        if (response["error"] == undefined) {
+            token = response["token"];
+            alert("Your changes are now live.", "Success!");
+        } else {
+            alert(response["error"], "Error");
+        }
     });
 }
 
@@ -161,32 +167,43 @@ function create_new_post() {
             + "-" + select("id", "month_select").js_object.value
             + "-" + select("id", "day_select").js_object.value;
 
-        post("utilities/create_post.php", {
-            "auth": auth,
+        var response = post("utilities/create_post.php", {
+            "token": token,
             "title": select("id", "title_input").js_object.value,
             "author": select("id", "author_select").js_object.value,
             "category": select("id", "category_select").js_object.value,
             "tags": select("id", "tags_input").js_object.value,
             "date": date,
             "content": editor.getValue()
-        }, false);
+        }, true);
 
-        select("id", "action_select").js_object.value = "edit_post";
-        update_editor_context("edit_post");
+        if (response["error"] == undefined) {
+            select("id", "action_select").js_object.value = "edit_post";
+            update_editor_context("edit_post");
 
-        alert("Your changes are now live.", "Success!");
+            token = response["token"];
+            alert("Your changes are now live.", "Success!");
+        } else {
+            alert(response["error"], "Error");
+        }
     });
 }
 
 function delete_current_post() {
     alert("Are you sure you want to delete this post? This cannot be undone.",
             "Ah!", "yes, delete this post", true, function() {
-        post("utilities/delete_post.php", {
-            "auth": auth,
+        var response = post("utilities/delete_post.php", {
+            "token": token,
             "post_id": select("id", "post_select").js_object.value
-        }, false);
-        update_editor_context("edit_post");
-        alert("The post has been deleted.", "Success!");
+        }, true);
+
+        if (response["error"] == undefined) {
+            update_editor_context("edit_post");
+            token = response["token"];
+            alert("The post has been deleted.", "Success!");
+        } else {
+            alert(response["error"], "Error");
+        }
     });
 }
 
@@ -227,23 +244,26 @@ function get_post_by_id(post_id) {
     return get("utilities/get_post_by_id.php", {"post_id": post_id});
 }
 
-function get_editor(password) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "utilities/get_editor.php?auth=" + password, false);
-    xhttp.send();
+function login(password) {
+    var response = post("utilities/get_token.php", {"password": password}, true);
+    token = response;
+    return !!response;
+}
 
-    if (xhttp.responseText == "auth_error") {
-        alert("That's not the password.", "Oops!");
-    } else {
-        auth = password;
+function get_editor(password) {
+    var authenticated = login(password);
+
+    if (authenticated) {
         select("id", "content").add_class("transparent");
         setTimeout(function() {
             var content = select("id", "content");
-            content.js_object.innerHTML = xhttp.responseText;
+            content.js_object.innerHTML = post("editor.html", {}, false);
             content.remove_class("transparent");
             on_editor_load();
         }, 500);
         close_alert();
+    } else {
+        alert("That's not the password.", "Oops!");
     }
 }
 

@@ -15,7 +15,7 @@ function query($sql, $db_passwd, $no_response) {
     if ($no_response) return "";
 
     $response = array();
-    while($row = $result->fetch_array(MYSQL_ASSOC)) {
+    while ($row = $result->fetch_array(MYSQL_ASSOC)) {
         $response[] = $row;
     }
     $result->close();

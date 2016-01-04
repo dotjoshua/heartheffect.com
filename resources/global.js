@@ -92,7 +92,11 @@ function get(url, data, json_parse) {
     request.send();
 
     if (json_parse) {
-        return JSON.parse(request.responseText);
+        try {
+            return JSON.parse(request.responseText);
+        } catch (ex) {
+            return {"error": request.responseText};
+        }
     } else {
         return request.responseText;
     }
@@ -107,7 +111,11 @@ function post(url, data, json_parse) {
     request.send(JSON.stringify(data));
 
     if (json_parse) {
-        return JSON.parse(request.responseText);
+        try {
+            return JSON.parse(request.responseText);
+        } catch (ex) {
+            return {"error": request.responseText};
+        }
     } else {
         return request.responseText;
     }
