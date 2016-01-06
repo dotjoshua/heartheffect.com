@@ -4,3 +4,5 @@
 utilities/auth.php
 
 admin/lib/*
+
+images/*
