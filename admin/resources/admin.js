@@ -57,27 +57,7 @@ function on_editor_load() {
 
     select("id", "post_select").js_object.addEventListener("change", get_selected_post);
     select("id", "delete_button").js_object.addEventListener("click", delete_current_post);
-    select("id", "image_button").js_object.addEventListener("click", function() {
-        var outer_div = document.createElement("div");
-
-        var image_choose = document.createElement("input");
-        image_choose.setAttribute("type", "file");
-        image_choose.id = "image_choose";
-        outer_div.appendChild(image_choose);
-
-        var progress_outer = document.createElement("div");
-        progress_outer.id = "progress_outer";
-        progress_outer.className = "display_none";
-        outer_div.appendChild(progress_outer);
-
-        var progress_inner = document.createElement("div");
-        progress_inner.id = "progress_inner";
-        progress_outer.appendChild(progress_inner);
-
-        alert(outer_div.outerHTML, "Images", "insert", true, function() {
-            upload_image();
-        });
-    });
+    select("id", "image_button").js_object.addEventListener("click", manage_images);
 
     select("id", "action_button").js_object.addEventListener("click", function() {
         if (select("id", "action_select").js_object.value == "edit_post") {
@@ -88,6 +68,61 @@ function on_editor_load() {
     });
 
     update_editor_context();
+}
+
+function manage_images() {
+    var outer_div = document.createElement("div");
+
+    var image_viewer = document.createElement("div");
+    image_viewer.id = "image_viewer";
+    var images = get("utilities/get_images.php", {}, true);
+    for (var i = 0; i < images.length; i++) {
+        var image = document.createElement("div");
+        image.setAttribute("style", "background: url(../images/" + images[i].image_url + "); background-size: cover;");
+        image.setAttribute("url", "http://heartheffect.com/images/" + images[i].image_url);
+        image.className = "image_icon";
+        image_viewer.appendChild(image);
+    }
+    outer_div.appendChild(image_viewer);
+
+    var image_url = document.createElement("div");
+    image_url.id = "image_url";
+    outer_div.appendChild(image_url);
+
+
+    var image_choose = document.createElement("input");
+    image_choose.setAttribute("type", "file");
+    image_choose.id = "image_choose";
+    outer_div.appendChild(image_choose);
+
+    var progress_outer = document.createElement("div");
+    progress_outer.id = "progress_outer";
+    progress_outer.className = "display_none";
+    outer_div.appendChild(progress_outer);
+
+    var progress_inner = document.createElement("div");
+    progress_inner.id = "progress_inner";
+    progress_outer.appendChild(progress_inner);
+
+    alert(outer_div.outerHTML, "Images", "upload", true, function() {
+        upload_image(manage_images);
+    }, null, "done");
+
+    select("id", "image_viewer").js_object.addEventListener("click", function(e) {
+        if (e.srcElement.className == "image_icon") {
+            var image_icons = select("class", "image_icon");
+            for (var i = 0; i < image_icons.length; i++) {
+                image_icons[i].remove_class("image_icon_selected");
+            }
+            e.srcElement.className += " image_icon_selected";
+
+            select("id", "image_url").js_object.textContent = e.srcElement.getAttribute("url");
+        }
+    });
+
+    if (select("class", "image_icon") != []) {
+        select("class", "image_icon")[0].js_object.click();
+    }
 }
 
 function get_selected_post() {
@@ -228,7 +263,7 @@ function delete_current_post() {
     });
 }
 
-function upload_image() {
+function upload_image(callback) {
     var file = document.getElementById("image_choose").files[0];
 
     if (!file) {
@@ -246,12 +281,11 @@ function upload_image() {
 
     var request = new XMLHttpRequest();
     request.onloadend = function() {
-        console.log(request.responseText);
         var response = JSON.parse(request.responseText);
 
         if (response["error"] == undefined) {
             token = response["token"];
-            alert("Image successfully uploaded.", "Yay!");
+            callback();
         } else {
             alert(response["error"], "Error");
         }

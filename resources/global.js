@@ -1,16 +1,18 @@
-function alert(message, title, button, cancel, button_callback, cancel_callback) {
+function alert(message, title, button, cancel, button_callback, cancel_callback, cancel_button_text) {
     message = (message == null) ? "" : message;
     title = (title == null) ? "" : title;
     button = (button == null) ? "ok" : button;
     button_callback = (button_callback == null) ? function() {close_alert()} : button_callback;
     cancel_callback = (cancel_callback == null) ? function() {close_alert()} : cancel_callback;
     cancel = (cancel == null) ? false : cancel;
+    cancel_button_text = (cancel_button_text == null) ? "cancel" : cancel_button_text;
 
     document.activeElement.blur();
 
     select("id", "alert_message").js_object.innerHTML = message;
     select("id", "alert_title").js_object.innerHTML = title;
     select("id", "alert_button").js_object.innerHTML = button;
+    select("id", "alert_cancel").js_object.innerHTML = cancel_button_text;
     if (cancel) {
         select("id", "alert_cancel").remove_class("display_none");
     } else {

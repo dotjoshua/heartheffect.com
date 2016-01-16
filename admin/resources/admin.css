@@ -87,6 +87,39 @@ button {
     background: rgba(0, 0, 0, 0);
     border: none;
     color: #333;
+    margin-top: 10px;
+}
+
+.image_icon {
+    width: 90px;
+    height: 90px;
+    display: inline-block;
+    margin: 5px 5px 0;
+    box-sizing: border-box;
+    max-height: 200px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.image_icon_selected {
+    border: 5px solid #E37954;
+}
+
+#image_viewer {
+    background: #333;
+    max-height: 200px;
+    overflow: scroll;
+}
+
+#image_url {
+    font-family: monospace;
+    font-size: 12px;
+    color: #fff;
+    width: 100%;
+    overflow: scroll;
+    background: #444;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 #progress_outer {

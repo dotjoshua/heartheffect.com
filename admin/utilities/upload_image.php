@@ -30,7 +30,7 @@ if (!in_array($extension, $allowed_extensions)) {
 $token = check_auth_token($token_given, $DB_PASSWD);
 
 if ($token) {
-    $image_url = base_convert(strval(time()), 10, 36 ).bin2hex(openssl_random_pseudo_bytes(16)).".".$extension;
+    $image_url = base_convert(strval(time()), 10, 36 ).bin2hex(openssl_random_pseudo_bytes(2)).".".$extension;
     file_put_contents("../../images/" . $image_url, $image);
 
     query("INSERT INTO Images (image_url, image_low_res_url, image_name) VALUES ('"
