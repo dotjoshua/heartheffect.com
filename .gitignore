@@ -1,7 +1,7 @@
 
 .idea/*
 
-utilities/auth.php
+*/auth.php
 
 admin/lib/*
 
