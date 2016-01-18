@@ -2,10 +2,6 @@ var editor = null;
 var token = false;
 
 window.onload = function() {
-
-    //debug:
-    get_editor("IronMan");
-
     select("id", "login_field").js_object.addEventListener("keypress", function(e) {
         if (e.keyCode == 13) {
             get_editor(select("id", "login_field").js_object.value);
