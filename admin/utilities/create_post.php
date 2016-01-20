@@ -18,7 +18,7 @@ if ($token) {
             .$_POST["date"]."', '"
             .$_POST["author"]."', '"
             .$_POST["category"]."', '"
-            .$_POST["author"]."')", $DB_PASSWD, true),
+            .$_POST["tags"]."')", $DB_PASSWD, true),
         "token" => $token
     );
     echo json_encode($response);

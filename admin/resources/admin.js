@@ -71,68 +71,71 @@ function manage_images() {
 
     var image_viewer = document.createElement("div");
     image_viewer.id = "image_viewer";
-    var images = get("utilities/get_images.php", {}, true);
-    for (var i = 0; i < images.length; i++) {
-        var image = document.createElement("div");
-        image.setAttribute("style", "background: url(../images/" + images[i].image_url + "); background-size: cover;");
-        image.setAttribute("url", "http://heartheffect.com/images/" + images[i].image_url);
-        image.className = "image_icon";
-        image_viewer.appendChild(image);
-    }
-    outer_div.appendChild(image_viewer);
+    get("utilities/get_images.php", {}, true, function(images) {
+        for (var i = 0; i < images.length; i++) {
+            var image = document.createElement("div");
+            image.setAttribute("style", "background: url(../images/" + images[i].image_url + "); background-size: cover;");
+            image.setAttribute("url", "http://heartheffect.com/images/" + images[i].image_url);
+            image.className = "image_icon";
+            image_viewer.appendChild(image);
+        }
+        outer_div.appendChild(image_viewer);
 
-    var image_url = document.createElement("div");
-    image_url.id = "image_url";
-    outer_div.appendChild(image_url);
+        var image_url = document.createElement("div");
+        image_url.id = "image_url";
+        outer_div.appendChild(image_url);
 
 
-    var image_choose = document.createElement("input");
-    image_choose.setAttribute("type", "file");
-    image_choose.id = "image_choose";
-    outer_div.appendChild(image_choose);
+        var image_choose = document.createElement("input");
+        image_choose.setAttribute("type", "file");
+        image_choose.id = "image_choose";
+        outer_div.appendChild(image_choose);
 
-    var progress_outer = document.createElement("div");
-    progress_outer.id = "progress_outer";
-    progress_outer.className = "display_none";
-    outer_div.appendChild(progress_outer);
+        var progress_outer = document.createElement("div");
+        progress_outer.id = "progress_outer";
+        progress_outer.className = "display_none";
+        outer_div.appendChild(progress_outer);
 
-    var progress_inner = document.createElement("div");
-    progress_inner.id = "progress_inner";
-    progress_outer.appendChild(progress_inner);
+        var progress_inner = document.createElement("div");
+        progress_inner.id = "progress_inner";
+        progress_outer.appendChild(progress_inner);
 
-    alert(outer_div.outerHTML, "Images", "upload", true, function() {
-        upload_image(manage_images);
-    }, null, "done");
+        alert(outer_div.outerHTML, "Images", "upload", true, function() {
+            upload_image(manage_images);
+        }, null, "done");
 
-    select("id", "image_viewer").js_object.addEventListener("click", function(e) {
-        if (e.srcElement.className == "image_icon") {
-            var image_icons = select("class", "image_icon");
-            for (var i = 0; i < image_icons.length; i++) {
-                image_icons[i].remove_class("image_icon_selected");
+        select("id", "image_viewer").js_object.addEventListener("click", function(e) {
+            if (e.srcElement.className == "image_icon") {
+                var image_icons = select("class", "image_icon");
+                for (var i = 0; i < image_icons.length; i++) {
+                    image_icons[i].remove_class("image_icon_selected");
+                }
+                e.srcElement.className += " image_icon_selected";
+
+                select("id", "image_url").js_object.textContent = e.srcElement.getAttribute("url");
             }
-            e.srcElement.className += " image_icon_selected";
+        });
 
-            select("id", "image_url").js_object.textContent = e.srcElement.getAttribute("url");
+        if (select("class", "image_icon") != []) {
+            select("class", "image_icon")[0].js_object.click();
         }
     });
-
-    if (select("class", "image_icon") != []) {
-        select("class", "image_icon")[0].js_object.click();
-    }
 }
 
 function get_selected_post() {
-    var post = get_post_by_id(select("id", "post_select").js_object.value)[0];
-    var date_info = post.date.split(" ")[0].split("-");
+    get("utilities/get_post_by_id.php", {"post_id": post_id}, function(response) {
+        var post = response[0];
+        var date_info = post.date.split(" ")[0].split("-");
 
-    select("id", "year_select").js_object.value = date_info[0];
-    select("id", "month_select").js_object.value = date_info[1];
-    select("id", "day_select").js_object.value = date_info[2];
-    select("id", "title_input").js_object.value = post.title;
-    select("id", "author_select").js_object.value = post.author;
-    select("id", "category_select").js_object.value = post.category;
-    select("id", "tags_input").js_object.value = post.tags;
-    editor.setValue(post.content);
+        select("id", "year_select").js_object.value = date_info[0];
+        select("id", "month_select").js_object.value = date_info[1];
+        select("id", "day_select").js_object.value = date_info[2];
+        select("id", "title_input").js_object.value = post.title;
+        select("id", "author_select").js_object.value = post.author;
+        select("id", "category_select").js_object.value = post.category;
+        select("id", "tags_input").js_object.value = post.tags;
+        editor.setValue(post.content);
+    });
 }
 
 function update_editor_context(value) {
@@ -156,20 +159,20 @@ function update_editor_context(value) {
 
     if (value == "edit_post") {
         var post_select = select("id", "post_select");
-        var posts = get_posts_info();
+        get("utilities/get_posts_info.php", {}, function(posts) {
+            post_select.js_object.innerHTML = "";
 
-        post_select.js_object.innerHTML = "";
+            for (i = 0; i < posts.length; i++) {
+                var new_option = document.createElement("option");
+                new_option.setAttribute("value", posts[i].id);
+                new_option.innerHTML = posts[i].title;
+                post_select.js_object.appendChild(new_option);
+            }
 
-        for (i = 0; i < posts.length; i++) {
-            var new_option = document.createElement("option");
-            new_option.setAttribute("value", posts[i].id);
-            new_option.innerHTML = posts[i].title;
-            post_select.js_object.appendChild(new_option);
-        }
+            get_selected_post();
 
-        get_selected_post();
-
-        select("id", "action_button").js_object.innerHTML = "update";
+            select("id", "action_button").js_object.innerHTML = "update";
+        });
     } else {
         editor.setValue("");
         select("id", "title_input").js_object.value = "";
@@ -187,11 +190,13 @@ function update_current_post() {
     if (!is_ready()) return;
 
     alert("Are you sure you want to save changes?", "Just making sure...", "yes", true, function() {
+        alert("", "Updating...", "ok", false);
+
         var date = select("id", "year_select").js_object.value
             + "-" + select("id", "month_select").js_object.value
             + "-" + select("id", "day_select").js_object.value;
 
-        var response = post("utilities/update_post.php", {
+        post("utilities/update_post.php", {
             "token": token,
             "post_id": select("id", "post_select").js_object.value,
             "title": select("id", "title_input").js_object.value,
@@ -200,14 +205,14 @@ function update_current_post() {
             "tags": select("id", "tags_input").js_object.value,
             "date": date,
             "content": editor.getValue()
-        }, true);
-
-        if (response["error"] == undefined) {
-            token = response["token"];
-            alert("Your changes are now live.", "Success!");
-        } else {
-            alert(response["error"], "Error");
-        }
+        }, true, function(response) {
+            if (response["error"] == undefined) {
+                token = response["token"];
+                alert("Your changes are now live.", "Success!");
+            } else {
+                alert(response["error"], "Error");
+            }
+        });
     });
 }
 
@@ -215,11 +220,13 @@ function create_new_post() {
     if (!is_ready()) return;
 
     alert("Are you sure you want to publish this post?", "Just making sure...", "yes", true, function() {
+        alert("", "Posting...", "ok", false);
+
         var date = select("id", "year_select").js_object.value
             + "-" + select("id", "month_select").js_object.value
             + "-" + select("id", "day_select").js_object.value;
 
-        var response = post("utilities/create_post.php", {
+        post("utilities/create_post.php", {
             "token": token,
             "title": select("id", "title_input").js_object.value,
             "author": select("id", "author_select").js_object.value,
@@ -227,35 +234,38 @@ function create_new_post() {
             "tags": select("id", "tags_input").js_object.value,
             "date": date,
             "content": editor.getValue()
-        }, true);
+        }, true, function(response) {
+            if (response["error"] == undefined) {
+                select("id", "action_select").js_object.value = "edit_post";
+                update_editor_context("edit_post");
 
-        if (response["error"] == undefined) {
-            select("id", "action_select").js_object.value = "edit_post";
-            update_editor_context("edit_post");
-
-            token = response["token"];
-            alert("Your changes are now live.", "Success!");
-        } else {
-            alert(response["error"], "Error");
-        }
+                token = response["token"];
+                alert("Your changes are now live.", "Success!");
+            } else {
+                alert(response["error"], "Error");
+            }
+        });
     });
 }
 
 function delete_current_post() {
     alert("Are you sure you want to delete this post? This cannot be undone.",
-            "Ah!", "yes, delete this post", true, function() {
-        var response = post("utilities/delete_post.php", {
-            "token": token,
-            "post_id": select("id", "post_select").js_object.value
-        }, true);
+        "Ah!", "yes, delete this post", true, function() {
+            alert("", "Deleting...", "ok", false);
 
-        if (response["error"] == undefined) {
-            update_editor_context("edit_post");
-            token = response["token"];
-            alert("The post has been deleted.", "Success!");
-        } else {
-            alert(response["error"], "Error");
-        }
+            post("utilities/delete_post.php", {
+                "token": token,
+                "post_id": select("id", "post_select").js_object.value
+            }, true, function(response) {
+                console.log(response);
+                if (response["error"] == undefined) {
+                    update_editor_context("edit_post");
+                    token = response["token"];
+                    alert("The post has been deleted.", "Success!");
+                } else {
+                    alert(response["error"], "Error");
+                }
+            });
     });
 }
 
@@ -326,35 +336,30 @@ function is_ready() {
     }
 }
 
-function get_posts_info() {
-    return get("utilities/get_posts_info.php", {});
-}
-
-function get_post_by_id(post_id) {
-    return get("utilities/get_post_by_id.php", {"post_id": post_id});
-}
-
-function login(password) {
-    var response = post("utilities/get_token.php", {"password": password}, true);
-    token = response;
-    return !!response;
+function login(password, callback) {
+    post("utilities/get_token.php", {"password": password}, true, function(response) {
+        token = response;
+        callback(!!response)
+    });
 }
 
 function get_editor(password) {
-    var authenticated = login(password);
-
-    if (authenticated) {
-        select("id", "content").add_class("transparent");
-        setTimeout(function() {
-            var content = select("id", "content");
-            content.js_object.innerHTML = post("editor.html", {}, false);
-            content.remove_class("transparent");
-            on_editor_load();
-        }, 500);
-        close_alert();
-    } else {
-        alert("That's not the password.", "Oops!");
-    }
+    login(password, function(authenticated) {
+        if (authenticated) {
+            select("id", "content").add_class("transparent");
+            setTimeout(function() {
+                post("editor.html", {}, false, function(response) {
+                    var content = select("id", "content");
+                    content.js_object.innerHTML = response;
+                    content.remove_class("transparent");
+                    on_editor_load();
+                });
+            }, 500);
+            close_alert();
+        } else {
+            alert("That's not the password.", "Oops!");
+        }
+    });
 }
 
 function move_divider(e) {

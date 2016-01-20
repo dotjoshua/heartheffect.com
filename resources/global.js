@@ -77,8 +77,9 @@ function ƪ(js_object) {
     return this;
 }
 
-function get(url, data, json_parse) {
+function get(url, data, json_parse, callback) {
     if (json_parse == undefined) json_parse = true;
+    if (callback == undefined) callback = function(result) {};
 
     var param_string =  "?";
     var prefix = "";
@@ -90,35 +91,38 @@ function get(url, data, json_parse) {
     }
 
     var request = new XMLHttpRequest();
-    request.open("GET", url + param_string, false);
-    request.send();
-
-    if (json_parse) {
-        try {
-            return JSON.parse(request.responseText);
-        } catch (ex) {
-            return {"error": request.responseText};
+    request.open("GET", url + param_string, true);
+    request.onloadend = function() {
+        if (json_parse) {
+            try {
+                callback(JSON.parse(request.responseText));
+            } catch (ex) {
+                callback({"error": request.responseText});
+            }
+        } else {
+            callback(request.responseText);
         }
-    } else {
-        return request.responseText;
-    }
+    };
+    request.send();
 }
 
-function post(url, data, json_parse) {
+function post(url, data, json_parse, callback) {
     if (json_parse == undefined) json_parse = true;
+    if (callback == undefined) callback = function(result) {};
 
     var request = new XMLHttpRequest();
-    request.open("POST", url, false);
+    request.open("POST", url, true);
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    request.send(JSON.stringify(data));
-
-    if (json_parse) {
-        try {
-            return JSON.parse(request.responseText);
-        } catch (ex) {
-            return {"error": request.responseText};
+    request.onloadend = function() {
+        if (json_parse) {
+            try {
+                callback(JSON.parse(request.responseText));
+            } catch (ex) {
+                callback({"error": request.responseText});
+            }
+        } else {
+            callback(request.responseText);
         }
-    } else {
-        return request.responseText;
-    }
+    };
+    request.send(JSON.stringify(data));
 }

@@ -2,6 +2,29 @@ body {
     background: #182032;
     font-family: AktivGroteskStd, sans-serif;
     color: #602B24;
+    padding-top: 50px;
+    box-sizing: border-box;
+}
+
+#nav {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.8);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+}
+
+.nav_item {
+    cursor: pointer;
+    display: inline-block;
+    padding: 10px;
+    color: #602B24;
+    transition: color 0.5s;
+}
+
+.nav_item:hover {
+    color: #ADAAA8;
 }
 
 .page {
