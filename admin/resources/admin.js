@@ -123,7 +123,7 @@ function manage_images() {
 }
 
 function get_selected_post() {
-    get("utilities/get_post_by_id.php", {"post_id": post_id}, function(response) {
+    get("utilities/get_post_by_id.php", {"post_id": post_id}, true, function(response) {
         var post = response[0];
         var date_info = post.date.split(" ")[0].split("-");
 
@@ -159,7 +159,7 @@ function update_editor_context(value) {
 
     if (value == "edit_post") {
         var post_select = select("id", "post_select");
-        get("utilities/get_posts_info.php", {}, function(posts) {
+        get("utilities/get_posts_info.php", {}, true, function(posts) {
             post_select.js_object.innerHTML = "";
 
             for (i = 0; i < posts.length; i++) {
@@ -338,14 +338,18 @@ function is_ready() {
 
 function login(password, callback) {
     post("utilities/get_token.php", {"password": password}, true, function(response) {
-        token = response;
-        callback(!!response)
+        if (response.error != undefined) {
+            alert(response.error);
+        } else {
+            token = response;
+            callback(response);
+        }
     });
 }
 
 function get_editor(password) {
-    login(password, function(authenticated) {
-        if (authenticated) {
+    login(password, function(response) {
+        if (response) {
             select("id", "content").add_class("transparent");
             setTimeout(function() {
                 post("editor.html", {}, false, function(response) {
