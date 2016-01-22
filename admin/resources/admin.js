@@ -123,7 +123,14 @@ function manage_images() {
 }
 
 function get_selected_post() {
+    var post_id = select("id", "post_select").js_object.value;
+
     get("utilities/get_post_by_id.php", {"post_id": post_id}, true, function(response) {
+        if (response.error != undefined) {
+            alert(response.error, "Error");
+            return;
+        }
+
         var post = response[0];
         var date_info = post.date.split(" ")[0].split("-");
 
