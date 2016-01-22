@@ -145,7 +145,7 @@ function get_selected_post() {
     });
 }
 
-function update_editor_context(value) {
+function update_editor_context(value, callback) {
     var toggle_on_edit_divs = select("class", "toggle_on_edit");
     for (var i = 0; i < toggle_on_edit_divs.length; i++) {
         if (value == "edit_post") {
@@ -167,6 +167,10 @@ function update_editor_context(value) {
     if (value == "edit_post") {
         var post_select = select("id", "post_select");
         get("utilities/get_posts_info.php", {}, true, function(posts) {
+            if (posts.error != undefined) {
+                alert(posts.error, "Error");
+            }
+
             post_select.js_object.innerHTML = "";
 
             for (i = 0; i < posts.length; i++) {
@@ -179,6 +183,10 @@ function update_editor_context(value) {
             get_selected_post();
 
             select("id", "action_button").js_object.innerHTML = "update";
+
+            if (callback != undefined) {
+                callback();
+            }
         });
     } else {
         editor.setValue("");
@@ -264,11 +272,11 @@ function delete_current_post() {
                 "token": token,
                 "post_id": select("id", "post_select").js_object.value
             }, true, function(response) {
-                console.log(response);
                 if (response["error"] == undefined) {
-                    update_editor_context("edit_post");
                     token = response["token"];
-                    alert("The post has been deleted.", "Success!");
+                    update_editor_context("edit_post", function() {
+                        alert("The post has been deleted.", "Success!");
+                    });
                 } else {
                     alert(response["error"], "Error");
                 }
