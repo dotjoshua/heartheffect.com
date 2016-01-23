@@ -165,7 +165,7 @@ function get_selected_post() {
 
         select("id", "year_select").js_object.value = date_info[0];
         select("id", "month_select").js_object.value = date_info[1];
-        select("id", "day_select").js_object.value = date_info[2];
+        select("id", "day_select").js_object.value = parseInt(date_info[2]) - 1;
         select("id", "title_input").js_object.value = post.title;
         select("id", "author_select").js_object.value = post.author;
         select("id", "category_select").js_object.value = post.category;
