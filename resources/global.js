@@ -94,11 +94,13 @@ function get(url, data, json_parse, callback) {
     request.open("GET", url + param_string, true);
     request.onloadend = function() {
         if (json_parse) {
+            var result;
             try {
-                callback(JSON.parse(request.responseText));
+                result = JSON.parse(request.responseText);
             } catch (ex) {
-                callback({"error": request.responseText});
+                result = {"error": request.responseText};
             }
+            callback(result);
         } else {
             callback(request.responseText);
         }
@@ -115,11 +117,13 @@ function post(url, data, json_parse, callback) {
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     request.onloadend = function() {
         if (json_parse) {
+            var result;
             try {
-                callback(JSON.parse(request.responseText));
+                result = JSON.parse(request.responseText);
             } catch (ex) {
-                callback({"error": request.responseText});
+                result = {"error": request.responseText};
             }
+            callback(result);
         } else {
             callback(request.responseText);
         }

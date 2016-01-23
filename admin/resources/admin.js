@@ -66,12 +66,33 @@ function on_editor_load() {
         }
     });
 
-    select("id", "author_select").js_object.addEventListener("change", function(event) {
-        var image = event.srcElement.value != "" ? "../resources/authors/" + event.srcElement.value + ".png" : "";
-        select("id", "preview_post_author").js_object.setAttribute("style", "background-image: url(" + image + ");");
-    });
+    select("id", "author_select").js_object.addEventListener("change", on_author_change);
 
+    select("id", "title_input").js_object.addEventListener("keyup", on_title_change);
+
+    select("id", "month_select").js_object.addEventListener("change", on_date_change);
+    select("id", "day_select").js_object.addEventListener("change", on_date_change);
+    select("id", "year_select").js_object.addEventListener("change", on_date_change);
+
+    on_date_change();
     update_editor_context();
+}
+
+function on_date_change() {
+    select("id", "preview_post_date").js_object.innerHTML = new Date(
+        select("id", "year_select").js_object.value,
+        parseInt(select("id", "month_select").js_object.value) - 1,
+        select("id", "day_select").js_object.value).toLocaleDateString();
+}
+
+function on_author_change() {
+    var author_select = select("id", "author_select").js_object;
+    var image = author_select.value != "" ? "../resources/authors/" + author_select.value + ".png" : "";
+    select("id", "preview_post_author").js_object.setAttribute("style", "background-image: url(" + image + ");");
+}
+
+function on_title_change() {
+    select("id", "preview_post_title").js_object.innerHTML = select("id", "title_input").js_object.value;
 }
 
 function manage_images() {
@@ -150,6 +171,10 @@ function get_selected_post() {
         select("id", "category_select").js_object.value = post.category;
         select("id", "tags_input").js_object.value = post.tags;
         editor.setValue(post.content);
+
+        on_author_change();
+        on_title_change();
+        on_date_change();
     });
 }
 
@@ -173,12 +198,13 @@ function update_editor_context(value, callback) {
     }
 
     if (value == "edit_post") {
-        var post_select = select("id", "post_select");
         get("utilities/get_posts_info.php", {}, true, function(posts) {
             if (posts.error != undefined) {
                 alert(posts.error, "Error");
+                return;
             }
 
+            var post_select = select("id", "post_select");
             post_select.js_object.innerHTML = "";
 
             for (i = 0; i < posts.length; i++) {
@@ -206,6 +232,10 @@ function update_editor_context(value, callback) {
         select("id", "tags_input").js_object.value = "";
         select("id", "category_select").js_object.value = "";
         select("id", "action_button").js_object.innerHTML = "publish";
+
+        on_author_change();
+        on_title_change();
+        on_date_change();
     }
 }
 

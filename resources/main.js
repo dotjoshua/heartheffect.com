@@ -97,15 +97,15 @@ function load_posts(date) {
             title_div.innerHTML = new_posts[i].title;
             post_div.appendChild(title_div);
 
+            var date_div = document.createElement('div');
+            date_div.className = "post_date";
+            date_div.innerHTML = new Date(new_posts[i].date.substr(0, 10)).toLocaleDateString();
+            post_div.appendChild(date_div);
+
             var content_div = document.createElement('div');
             content_div.className = "post_content";
             content_div.innerHTML = new_posts[i].content;
             post_div.appendChild(content_div);
-
-            var date_div = document.createElement('div');
-            date_div.className = "post_date";
-            date_div.innerHTML = new_posts[i].date;
-            post_div.appendChild(date_div);
 
             posts_buffer_size--;
         }
