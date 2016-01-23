@@ -7,8 +7,6 @@ window.onload = function() {
     if ("onhashchange" in window) {
         window.addEventListener("hashchange", on_hash_change);
     }
-
-    while (load_posts(last_date_loaded));
 };
 
 function open_page(page_div_id) {
@@ -39,7 +37,6 @@ function open_page(page_div_id) {
 
 function load_pages() {
     get("utilities/get_pages.php", {}, true, function(response) {
-        console.log(response);
         var pages = [];
         for (var key in response) {
             pages[response[key].substring(0, 1)] =
@@ -73,6 +70,7 @@ function load_pages() {
         }
 
         on_hash_change();
+        while (load_posts(last_date_loaded));
     });
 }
 
@@ -81,10 +79,18 @@ function load_posts(date) {
         var blog_page = select("id", "blog_page");
 
         for (var i in new_posts) {
+            console.log(new_posts[i]);
+
             var post_div = document.createElement('div');
             post_div.className = "post";
             post_div.id = "post_" + new_posts[i].id;
             blog_page.js_object.appendChild(post_div);
+
+            var author_div = document.createElement('div');
+            author_div.className = "post_author";
+            author_div.setAttribute("style", "background-image: url(./resources/authors/"
+                + new_posts[i].author + ".png);");
+            post_div.appendChild(author_div);
 
             var title_div = document.createElement('div');
             title_div.className = "post_title";
@@ -95,11 +101,6 @@ function load_posts(date) {
             content_div.className = "post_content";
             content_div.innerHTML = new_posts[i].content;
             post_div.appendChild(content_div);
-
-            var author_div = document.createElement('div');
-            author_div.className = "post_author";
-            author_div.innerHTML = new_posts[i].author;
-            post_div.appendChild(author_div);
 
             var date_div = document.createElement('div');
             date_div.className = "post_date";

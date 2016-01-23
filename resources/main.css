@@ -1,30 +1,33 @@
 body {
-    background: #182032;
+    background: #222;
     font-family: AktivGroteskStd, sans-serif;
-    color: #602B24;
+    color: #ddd;
     padding-top: 50px;
     box-sizing: border-box;
 }
 
 #nav {
     text-align: center;
-    background: rgba(255, 255, 255, 0.8);
+    background: #555;
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 100;
+    border-bottom: 1px solid #aa3f00;
 }
 
 .nav_item {
     cursor: pointer;
     display: inline-block;
     padding: 10px;
-    color: #602B24;
+    color: #ddd;
+    font-size: 18px;
+    font-weight: 800;
     transition: color 0.5s;
 }
 
 .nav_item:hover {
-    color: #ADAAA8;
+    color: #888;
 }
 
 .page {
@@ -33,13 +36,4 @@ body {
     -ms-transition: opacity 0.5s;
     -o-transition: opacity 0.5s;
     transition: opacity 0.5s;
-}
-
-.post, #no_more_posts {
-    margin: 10px auto;
-    padding: 10px;
-    background: #E6E3E1;
-    width: 100%;
-    max-width: 1000px;
-    box-sizing: border-box;
 }

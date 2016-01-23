@@ -171,7 +171,8 @@ button {
     position: absolute;
     top: 50%;
     left: 0;
-    background: #444;
+    background: #222;
+    overflow: scroll;
 }
 
 #logo {

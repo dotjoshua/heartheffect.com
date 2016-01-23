@@ -1,0 +1,26 @@
+#blog_page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 10px 10px 10px 100px;
+    box-sizing: border-box;
+}
+
+.post, #no_more_posts {
+    padding: 10px;
+    background: #555;
+    color: #ddd;
+    box-sizing: border-box;
+    border-left: 1px solid #aa3f00;
+}
+
+.post_author {
+    position: absolute;
+    margin-left: -100px;
+    margin-top: -10px;
+    height: 75px;
+    width: 75px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    border: 3px solid #666;
+}

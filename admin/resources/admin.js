@@ -25,6 +25,9 @@ function on_editor_load() {
     });
     editor.setOption("theme", "lesser-dark");
     editor.setSize("100%", "100%");
+    editor.on("change", function(instance, change_obj) {
+        select("id", "preview_post_content").js_object.innerHTML = instance.getValue();
+    });
 
     select("id", "action_select").js_object.addEventListener("change", function(e) {
         if (e.target.value == "edit_post") {
@@ -61,6 +64,11 @@ function on_editor_load() {
         } else {
             create_new_post();
         }
+    });
+
+    select("id", "author_select").js_object.addEventListener("change", function(event) {
+        var image = event.srcElement.value != "" ? "../resources/authors/" + event.srcElement.value + ".png" : "";
+        select("id", "preview_post_author").js_object.setAttribute("style", "background-image: url(" + image + ");");
     });
 
     update_editor_context();
