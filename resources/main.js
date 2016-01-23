@@ -79,8 +79,6 @@ function load_posts(date) {
         var blog_page = select("id", "blog_page");
 
         for (var i in new_posts) {
-            console.log(new_posts[i]);
-
             var post_div = document.createElement('div');
             post_div.className = "post";
             post_div.id = "post_" + new_posts[i].id;
