@@ -115,10 +115,9 @@ function load_posts(date) {
             blog_page.js_object.appendChild(post_div);
 
             posts_buffer_size = 10;
-            return false;
         } else {
             last_date_loaded = new_posts[new_posts.length - 1].date.substr(0, 10);
-            return true;
+            load_posts(last_date_loaded);
         }
     });
 }
