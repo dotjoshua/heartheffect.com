@@ -45,3 +45,7 @@
     line-height: 24px;
     overflow: hidden;
 }
+
+.post img {
+    max-width: 100%;
+}
