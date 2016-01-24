@@ -1,5 +1,6 @@
 var last_date_loaded = "9999-01-01";
 var posts_buffer_size = 10;
+var current_page;
 
 window.onload = function() {
     load_pages();
@@ -14,6 +15,12 @@ function open_page(page_div_id) {
         alert("Page does not exist.", "Oops!");
         return;
     }
+
+    if (current_page == page_div_id) {
+        return;
+    }
+
+    current_page = page_div_id;
 
     var pages = select("class", "page");
     for (var i in pages) {
