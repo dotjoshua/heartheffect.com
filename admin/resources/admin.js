@@ -1,3 +1,4 @@
+var timer;
 var editor = null;
 var token = false;
 
@@ -148,6 +149,8 @@ function manage_images() {
         if (select("class", "image_icon") != []) {
             select("class", "image_icon")[0].js_object.click();
         }
+
+        refresh_token();
     });
 }
 
@@ -175,6 +178,8 @@ function get_selected_post() {
         on_author_change();
         on_title_change();
         on_date_change();
+
+        refresh_token();
     });
 }
 
@@ -221,6 +226,8 @@ function update_editor_context(value, callback) {
             if (callback != undefined) {
                 callback();
             }
+
+            refresh_token();
         });
     } else {
         editor.setValue("");
@@ -260,7 +267,7 @@ function update_current_post() {
             "content": editor.getValue()
         }, true, function(response) {
             if (response["error"] == undefined) {
-                token = response["token"];
+                set_token(response["token"]);
                 alert("Your changes are now live.", "Success!");
             } else {
                 alert(response["error"], "Error");
@@ -292,7 +299,7 @@ function create_new_post() {
                 select("id", "action_select").js_object.value = "edit_post";
                 update_editor_context("edit_post");
 
-                token = response["token"];
+                set_token(response["token"]);
                 alert("Your changes are now live.", "Success!");
             } else {
                 alert(response["error"], "Error");
@@ -311,7 +318,7 @@ function delete_current_post() {
                 "post_id": select("id", "post_select").js_object.value
             }, true, function(response) {
                 if (response["error"] == undefined) {
-                    token = response["token"];
+                    set_token(response["token"]);
                     update_editor_context("edit_post", function() {
                         alert("The post has been deleted.", "Success!");
                     });
@@ -343,7 +350,7 @@ function upload_image(callback) {
         var response = JSON.parse(request.responseText);
 
         if (response["error"] == undefined) {
-            token = response["token"];
+            set_token(response["token"]);
             callback();
         } else {
             alert(response["error"], "Error");
@@ -394,7 +401,7 @@ function login(password, callback) {
         if (response.error != undefined) {
             alert(response.error);
         } else {
-            token = response;
+            set_token(response);
             callback(response);
         }
     });
@@ -427,4 +434,34 @@ function move_divider(e) {
         select("id", "preview_window").js_object.setAttribute("style",
             "top: " + middle_percent + "%; height: " + (100- middle_percent) + "%");
     }
+}
+
+function refresh_token() {
+    post("utilities/refresh_token.php", {
+        "token": token
+    }, true, function(response) {
+        if (response["error"] == undefined) {
+            set_token(response["token"]);
+        } else {
+            alert(response["error"], "Error");
+        }
+    });
+}
+
+function set_token(new_token) {
+    token = new_token;
+    if (timer != undefined) {
+        clearTimeout(timer);
+    }
+    timer = setTimeout(function() {
+        var logout = setTimeout(function() {
+            location.reload();
+        }, 60000);
+
+        alert("Logging out in 1 minute due to inactivity.", "Alert", "I'm still here", false, function() {
+            close_alert();
+            refresh_token();
+            clearTimeout(logout);
+        });
+    }, 1740000);
 }
