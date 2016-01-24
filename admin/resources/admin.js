@@ -43,7 +43,6 @@ function on_editor_load() {
                     },
                     function() {
                         e.target.value = "new_post";
-                        update_editor_context(e.target.value);
                         close_alert();
                     }
                 );
@@ -154,7 +153,7 @@ function manage_images() {
     });
 }
 
-function get_selected_post() {
+function get_selected_post(callback) {
     var post_id = select("id", "post_select").js_object.value;
 
     get("utilities/get_post_by_id.php", {"post_id": post_id}, true, function(response) {
@@ -179,7 +178,7 @@ function get_selected_post() {
         on_title_change();
         on_date_change();
 
-        refresh_token();
+        refresh_token(callback);
     });
 }
 
@@ -219,15 +218,9 @@ function update_editor_context(value, callback) {
                 post_select.js_object.appendChild(new_option);
             }
 
-            get_selected_post();
-
             select("id", "action_button").js_object.innerHTML = "update";
 
-            if (callback != undefined) {
-                callback();
-            }
-
-            refresh_token();
+            get_selected_post(callback);
         });
     } else {
         editor.setValue("");
@@ -296,11 +289,12 @@ function create_new_post() {
             "content": editor.getValue()
         }, true, function(response) {
             if (response["error"] == undefined) {
+                set_token(response["token"]);
+
                 select("id", "action_select").js_object.value = "edit_post";
                 update_editor_context("edit_post");
 
-                set_token(response["token"]);
-                alert("Your changes are now live.", "Success!");
+                alert("Your new post is now live.", "Success!");
             } else {
                 alert(response["error"], "Error");
             }
@@ -436,7 +430,7 @@ function move_divider(e) {
     }
 }
 
-function refresh_token() {
+function refresh_token(callback) {
     post("utilities/refresh_token.php", {
         "token": token
     }, true, function(response) {
@@ -446,6 +440,10 @@ function refresh_token() {
             alert(response["error"], "Error");
         }
     });
+
+    if (callback != undefined) {
+        callback();
+    }
 }
 
 function set_token(new_token) {
@@ -460,8 +458,9 @@ function set_token(new_token) {
 
         alert("Logging out in 1 minute due to inactivity.", "Alert", "I'm still here", false, function() {
             close_alert();
-            refresh_token();
-            clearTimeout(logout);
+            refresh_token(function() {
+                clearTimeout(logout);
+            });
         });
     }, 1740000);
 }
