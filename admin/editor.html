@@ -1,11 +1,17 @@
 <div id="editor">
-    <div id="menu_bar_container">
-        <div id="menu_bar">
+    <div id="code_window">
+        <div id="menu">
+            <div id="logo_small">Hearth Effect Admin</div>
             <select id="action_select">
                 <option value="new_post">new post</option>
                 <option value="edit_post">edit post</option>
             </select>
             <select id="post_select" class="toggle_on_edit display_none"></select>
+            <input id="title_input" placeholder="post title" autocomplete="off"/>
+            <select id="author_select">
+                <option value="">author</option>
+                <option value="white_cat">White Cat</option>
+            </select>
             <select id="month_select">
                 <option value="01">January</option>
                 <option value="02">February</option>
@@ -61,11 +67,6 @@
                 <option value="2019">2019</option>
                 <option value="2020">2020</option>
             </select>
-            <select id="author_select">
-                <option value="">author</option>
-                <option value="white_cat">White Cat</option>
-            </select>
-            <input id="title_input" placeholder="post title" autocomplete="off"/>
             <input id="tags_input" placeholder="tags (space separated)" autocomplete="off"/>
             <select id="category_select">
                 <option value="">category</option>
@@ -75,8 +76,6 @@
             <button id="action_button">publish</button>
             <button id="delete_button" class="toggle_on_edit display_none">delete</button>
         </div>
-    </div>
-    <div id="code_window">
         <textarea id="editor_textarea" title="editor_textarea"></textarea>
     </div>
     <div id="preview_window">
