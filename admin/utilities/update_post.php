@@ -14,6 +14,7 @@ if ($token) {
     $response = array(
         "response" => query("UPDATE Posts SET title='".$_POST["title"]
             ."', content='".$_POST["content"]
+            ."', style='".$_POST["style"]
             ."', author='".$_POST["author"]
             ."', category='".$_POST["category"]
             ."', tags='".$_POST["tags"]

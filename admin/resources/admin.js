@@ -74,6 +74,21 @@ function on_editor_load() {
     select("id", "day_select").js_object.addEventListener("change", on_date_change);
     select("id", "year_select").js_object.addEventListener("change", on_date_change);
 
+    select("id", "style_editor").addEventListener("keydown", function(e) {
+        if (e.keyCode == 9) {
+            e.preventDefault();
+            var s = e.srcElement.selectionStart;
+            e.srcElement.value = e.srcElement.value.substring(0, e.srcElement.selectionStart)
+                + "\t" + e.srcElement.value.substring(e.srcElement.selectionEnd);
+            e.srcElement.selectionEnd = s + 1;
+        }
+    });
+
+    select("id", "style_editor").addEventListener("keyup", function(e) {
+        select("id", "preview_style").js_object.innerHTML =
+            e.srcElement.value.replace(/<current_post_id>/g, 0);
+    });
+
     on_date_change();
     update_editor_context();
 }
@@ -172,7 +187,10 @@ function get_selected_post(callback) {
         select("id", "author_select").js_object.value = post.author;
         select("id", "category_select").js_object.value = post.category;
         select("id", "tags_input").js_object.value = post.tags;
+
         editor.setValue(post.content);
+        select("id", "style_editor").js_object.value = post.style;
+        select("id", "preview_style").js_object.innerHTML = post.style.replace(/<current_post_id>/g, 0);
 
         on_author_change();
         on_title_change();
@@ -224,6 +242,10 @@ function update_editor_context(value, callback) {
         });
     } else {
         editor.setValue("");
+        select("id", "style_editor").js_object.innerHTML = "#post_<current_post_id> {\n\t\n}";
+        select("id", "preview_style").js_object.innerHTML =
+            select("id", "style_editor").js_object.value.replace(/<current_post_id>/g, 0);
+
         select("id", "title_input").js_object.value = "";
         select("id", "month_select").js_object.value = ("0" + new Date().getMonth() + 1).slice(-2);
         select("id", "day_select").js_object.value = ("0" + new Date().getDate()).slice(-2);
@@ -257,7 +279,8 @@ function update_current_post() {
             "category": select("id", "category_select").js_object.value,
             "tags": select("id", "tags_input").js_object.value,
             "date": date,
-            "content": editor.getValue()
+            "content": editor.getValue(),
+            "style": select("id", "style_editor").js_object.value
         }, true, function(response) {
             if (response["error"] == undefined) {
                 set_token(response["token"]);
@@ -286,7 +309,8 @@ function create_new_post() {
             "category": select("id", "category_select").js_object.value,
             "tags": select("id", "tags_input").js_object.value,
             "date": date,
-            "content": editor.getValue()
+            "content": editor.getValue(),
+            "style": select("id", "style_editor").js_object.value
         }, true, function(response) {
             if (response["error"] == undefined) {
                 set_token(response["token"]);
@@ -424,8 +448,8 @@ function move_divider(e) {
     if (e.pageY > 100 && e.pageY < (window.innerHeight - 100)) {
         var middle_percent = (e.pageY / window.innerHeight) * 100;
         select("id", "divider").js_object.setAttribute("style", "top: " + middle_percent + "%");
-        select("id", "code_window").js_object.setAttribute("style", "height: " + middle_percent + "%");
-        select("id", "preview_window").js_object.setAttribute("style",
+        select("id", "editor_top").js_object.setAttribute("style", "height: " + middle_percent + "%");
+        select("id", "editor_bottom").js_object.setAttribute("style",
             "top: " + middle_percent + "%; height: " + (100- middle_percent) + "%");
     }
 }

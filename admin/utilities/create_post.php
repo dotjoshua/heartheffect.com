@@ -12,9 +12,10 @@ $token = check_auth_token($_POST["token"], $DB_PASSWD);
 
 if ($token) {
     $response = array(
-        "response" => query("INSERT INTO Posts (title, content, date, author, category, tags) VALUES('"
+        "response" => query("INSERT INTO Posts (title, content, style, date, author, category, tags) VALUES('"
             .$_POST["title"]."', '"
             .$_POST["content"]."', '"
+            .$_POST["style"]."', '"
             .$_POST["date"]."', '"
             .$_POST["author"]."', '"
             .$_POST["category"]."', '"

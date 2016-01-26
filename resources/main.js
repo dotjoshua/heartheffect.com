@@ -107,9 +107,14 @@ function load_posts(date) {
             date_div.innerHTML = new Date(new_posts[i].date.substr(0, 10)).toLocaleDateString();
             post_div.appendChild(date_div);
 
+            var style = new_posts[i].style.replace(/<current_post_id>/g, new_posts[i].id);
+            var style_elem = document.createElement("style");
+            style_elem.innerHTML = style;
+
             var content_div = document.createElement('div');
             content_div.className = "post_content";
             content_div.innerHTML = new_posts[i].content;
+            content_div.appendChild(style_elem);
             post_div.appendChild(content_div);
 
             posts_buffer_size--;
