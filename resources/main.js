@@ -157,7 +157,7 @@ function sparks_animation(e) {
         spark_div.velocity_x = Math.random() - 0.5;
         spark_div.velocity_y = Math.random() - 0.9;
         spark_div.rotation = 0;
-        spark_div.rotation_velocity = (Math.random() - 0.5) * 5;
+        spark_div.rotation_velocity = (Math.random() - 0.5) * 10;
         spark_div.offset_x = spark_div.offset_y = 0;
         spark_div.setAttribute("style", "top: " + e.clientY + "px; left: " + e.clientX + "px;");
         select("id", "animation_elements").js_object.appendChild(spark_div);

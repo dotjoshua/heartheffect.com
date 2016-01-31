@@ -51,11 +51,11 @@ body {
 
 .spark {
     position: fixed;
-    width: 4px;
-    height: 4px;
+    width: 2px;
+    height: 2px;
     background: rgba(0, 0, 0, 0);
     z-index: 10000;
-    border-radius: 2px;
+    padding-left: 5px;
     border-right: 2px solid #E37954;
     animation: 10s opacity_fade;
     -webkit-animation: 10s opacity_fade;
