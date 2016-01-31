@@ -62,11 +62,31 @@ body {
 }
 
 @keyframes opacity_fade {
-    0% {opacity: 1}
-    100% {opacity: 0}
+    0% {
+        opacity: 1;
+        border-color: #E37954;
+    }
+    30% {
+        opacity: 1;
+        border-color: #999;
+    }
+    100% {
+        opacity: 0;
+        border-color: #999;
+    }
 }
 
 @-webkit-keyframes opacity_fade {
-    0% {opacity: 1}
-    100% {opacity: 0}
+    0% {
+        opacity: 1;
+        border-color: #E37954;
+    }
+    30% {
+        opacity: 1;
+        border-color: #999;
+    }
+    100% {
+        opacity: 0;
+        border-color: #999;
+    }
 }
