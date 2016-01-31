@@ -54,9 +54,9 @@ function on_editor_load() {
         }
     });
 
-    select("id", "post_select").js_object.addEventListener("change", get_selected_post);
-    select("id", "delete_button").js_object.addEventListener("click", delete_current_post);
-    select("id", "image_button").js_object.addEventListener("click", manage_images);
+    select("id", "post_select").js_object.addEventListener("change", function() { get_selected_post() });
+    select("id", "delete_button").js_object.addEventListener("click", function() { delete_current_post() });
+    select("id", "image_button").js_object.addEventListener("click", function() { manage_images() });
 
     select("id", "action_button").js_object.addEventListener("click", function() {
         if (select("id", "action_select").js_object.value == "edit_post") {
@@ -180,9 +180,11 @@ function get_selected_post(callback) {
         var post = response[0];
         var date_info = post.date.split(" ")[0].split("-");
 
+        console.log(date_info);
+
         select("id", "year_select").js_object.value = date_info[0];
         select("id", "month_select").js_object.value = date_info[1];
-        select("id", "day_select").js_object.value = parseInt(date_info[2]) - 1;
+        select("id", "day_select").js_object.value = date_info[2];
         select("id", "title_input").js_object.value = post.title;
         select("id", "author_select").js_object.value = post.author;
         select("id", "category_select").js_object.value = post.category;

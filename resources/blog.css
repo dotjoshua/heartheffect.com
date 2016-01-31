@@ -3,7 +3,7 @@
     margin: 0 auto;
     padding: 10px 10px 10px 100px;
     box-sizing: border-box;
-    transition: padding 0.5s;
+    transition: padding, opacity 0.5s;
 }
 
 .post, #no_more_posts {
