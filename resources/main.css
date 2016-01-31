@@ -48,3 +48,25 @@ body {
     height: 100%;
     border: none;
 }
+
+.spark {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0);
+    z-index: 10000;
+    border-radius: 2px;
+    border-right: 2px solid #E37954;
+    animation: 10s opacity_fade;
+    -webkit-animation: 10s opacity_fade;
+}
+
+@keyframes opacity_fade {
+    0% {opacity: 1}
+    100% {opacity: 0}
+}
+
+@-webkit-keyframes opacity_fade {
+    0% {opacity: 1}
+    100% {opacity: 0}
+}

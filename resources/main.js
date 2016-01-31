@@ -64,8 +64,9 @@ function load_pages() {
             nav_div.innerHTML = pages[i][1];
             nav_div.className = "nav_item";
             nav_div.setAttribute("page_div", pages[i][2]);
-            nav_div.addEventListener("click", function() {
+            nav_div.addEventListener("click", function(e) {
                 open_page(this.getAttribute("page_div"));
+                sparks_animation(e);
             });
             select("id", "nav").js_object.appendChild(nav_div);
 
@@ -141,5 +142,50 @@ function on_hash_change() {
         }
     } else {
         open_page("home_page");
+    }
+}
+
+function sparks_animation(e) {
+    var spark_divs = [];
+
+    for (var i = 0; i < 10; i++) {
+        var spark_div = document.createElement("div");
+        spark_divs[i] = spark_div;
+        spark_div.className = "spark";
+        spark_div.x = e.clientX;
+        spark_div.y = e.clientY;
+        spark_div.velocity_x = Math.random() - 0.5;
+        spark_div.velocity_y = Math.random() - 0.9;
+        spark_div.rotation = 0;
+        spark_div.rotation_velocity = (Math.random() - 0.5) * 5;
+        spark_div.offset_x = spark_div.offset_y = 0;
+        spark_div.setAttribute("style", "top: " + e.clientY + "px; left: " + e.clientX + "px;");
+        select("id", "animation_elements").js_object.appendChild(spark_div);
+    }
+
+    setTimeout(function() {
+        for (var i = 0; i < 10; i++) {
+            select("id", "animation_elements").js_object.removeChild(spark_divs[i]);
+            spark_divs[i] = undefined;
+        }
+    }, 10000);
+
+    requestAnimationFrame(function() { update_spark_location(spark_divs) });
+}
+
+function update_spark_location(spark_divs) {
+    for (var i = 0; i < 10; i++) {
+        if (spark_divs[i] == undefined) break;
+        spark_divs[i].offset_x += spark_divs[i].velocity_x;
+        spark_divs[i].offset_y += spark_divs[i].velocity_y;
+        spark_divs[i].rotation += spark_divs[i].rotation_velocity;
+        spark_divs[i].rotation %= 360;
+        spark_divs[i].setAttribute("style", "top: " + spark_divs[i].y + "px; left: " + spark_divs[i].x
+            + "px; transform: translateX(" + spark_divs[i].offset_x + "px) translateY("
+            + spark_divs[i].offset_y + "px) rotateZ(" + spark_divs[i].rotation + "deg);")
+    }
+
+    if (spark_divs[0] != undefined) {
+        requestAnimationFrame(function() { update_spark_location(spark_divs) });
     }
 }

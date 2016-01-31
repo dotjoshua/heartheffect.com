@@ -180,8 +180,6 @@ function get_selected_post(callback) {
         var post = response[0];
         var date_info = post.date.split(" ")[0].split("-");
 
-        console.log(date_info);
-
         select("id", "year_select").js_object.value = date_info[0];
         select("id", "month_select").js_object.value = date_info[1];
         select("id", "day_select").js_object.value = date_info[2];
