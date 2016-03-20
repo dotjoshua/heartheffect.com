@@ -121,7 +121,7 @@ function load_pages() {
 
 function open_post(post_id) {
     get("utilities/get_post_by_id.php", {"post_id": post_id}, true, function(response) {
-        console.log(response);
+        add_posts_to_element(response, select("id", "post_page"));
     });
 }
 
@@ -196,6 +196,8 @@ function on_hash_change() {
                 search_posts(url_contents[url_contents.length - 1]);
             }
         } else if (location.href[location.href.indexOf('#') + 1] == "3") {
+            select("id", "post_page").js_object.innerHTML = "";
+
             open_page("post_page");
             if (current_page == "post_page") {
                 url_contents = window.location.hash.split("/");
