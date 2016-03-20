@@ -28,10 +28,30 @@ body {
     font-size: 18px;
     font-weight: 800;
     transition: color 0.5s;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .nav_item:hover {
     color: #888;
+}
+
+#search_input {
+    position: absolute;
+    right: 0;
+    top: 0;
+    border: none;
+    padding: 6px 13px;
+    margin-top: 7px;
+    margin-right: 6px;
+    border-radius: 50px;
+    background: #333;
+    color: #fff;
+    font-size: 14px;
 }
 
 .page {
@@ -64,6 +84,10 @@ body {
 @keyframes opacity_fade {
     0% {
         opacity: 1;
+        border-color: #fff;
+    }
+    10% {
+        opacity: 1;
         border-color: #E37954;
     }
     30% {
@@ -78,6 +102,10 @@ body {
 
 @-webkit-keyframes opacity_fade {
     0% {
+        opacity: 1;
+        border-color: #fff;
+    }
+    10% {
         opacity: 1;
         border-color: #E37954;
     }

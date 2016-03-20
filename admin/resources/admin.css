@@ -155,7 +155,6 @@ button {
     box-sizing: border-box;
     max-height: 200px;
     cursor: pointer;
-    box-sizing: border-box;
 }
 
 .image_icon_selected {

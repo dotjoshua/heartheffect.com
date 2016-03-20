@@ -8,6 +8,19 @@ window.onload = function() {
     if ("onhashchange" in window) {
         window.addEventListener("hashchange", on_hash_change);
     }
+
+    var search_timer;
+    select("id", "search_input").js_object.addEventListener("keyup", function(e) {
+        if (search_timer != undefined) {
+            clearTimeout(search_timer);
+        }
+
+        if (e.srcElement.value.length > 2) {
+            search_timer = setTimeout(function() {
+                window.location.hash = "2/search/" + e.srcElement.value;
+            }, 500);
+        }
+    });
 };
 
 function open_page(page_div_id) {
@@ -18,6 +31,18 @@ function open_page(page_div_id) {
 
     if (current_page == page_div_id) {
         return;
+    }
+
+    var prefix = "1/";
+    var suffix = "";
+    if (page_div_id == "search_page") {
+        prefix = "2/";
+        var url_contents = window.location.hash.split("/");
+        suffix = "/" + url_contents[url_contents.length - 1];
+    } else if (page_div_id == "post_page") {
+        prefix = "3/";
+        url_contents = window.location.hash.split("/");
+        suffix = "/" + url_contents[url_contents.length - 1];
     }
 
     current_page = page_div_id;
@@ -39,90 +64,74 @@ function open_page(page_div_id) {
         }, 10);
     }, 500);
 
-    window.location.hash = "1/" + page_div_id.substring(0, page_div_id.length - 5);
+    window.location.hash = prefix + page_div_id.substring(0, page_div_id.length - 5) + suffix;
 }
 
 function load_pages() {
     get("utilities/get_pages.php", {}, true, function(response) {
         var pages = [];
-        for (var key in response) {
-            pages[response[key].substring(0, 1)] =
-                [
-                    response[key],
-                    response[key].replace(/_/g, ' ').substring(2, response[key].lastIndexOf(".")),
-                    response[key].substring(2, response[key].lastIndexOf(".")) + "_page"
-                ];
+        for (var i in response) {
+            var page = {};
+            page.location = response[i];
+            page.name = response[i].replace(/_/g, ' ').substring(2, response[i].lastIndexOf("."));
+            page.div_name = response[i].substring(2, response[i].lastIndexOf(".")) + "_page";
+            pages[response[i].substring(0, 1)] = page;
         }
 
-        for (var i in pages) {
+        for (i in pages) {
             var request = new XMLHttpRequest();
-            request.open("GET", "pages/" + pages[i][0], false);
+            request.open("GET", "pages/" + pages[i].location, false);
             request.send();
+            pages[i].content = request.responseText;
 
-            var nav_div = document.createElement("div");
-            nav_div.id = "nav_" + pages[i][2];
-            nav_div.innerHTML = pages[i][1];
-            nav_div.className = "nav_item";
-            nav_div.setAttribute("page_div", pages[i][2]);
-            nav_div.addEventListener("click", function(e) {
-                open_page(this.getAttribute("page_div"));
-                sparks_animation(e);
-            });
-            select("id", "nav").js_object.appendChild(nav_div);
-
-            var page_div = document.createElement("div");
-            page_div.className = "page transparent display_none";
-            page_div.id = pages[i][2];
-            page_div.innerHTML = request.responseText;
-            select("id", "content").js_object.appendChild(page_div);
+            var page_divs = create_page_divs(pages[i]);
+            select("id", "nav").js_object.appendChild(page_divs[0]);
+            select("id", "content").js_object.appendChild(page_divs[1]);
         }
 
         on_hash_change();
         while (load_posts(last_date_loaded));
+    });
+
+    var hidden_pages = [{"div_name": "post_page", "content": ""}];
+    for (var i in hidden_pages) {
+        var page_divs = create_page_divs(hidden_pages[i]);
+        select("id", "content").js_object.appendChild(page_divs[1]);
+    }
+
+    function create_page_divs(page_data) {
+        var nav_div = document.createElement("div");
+        nav_div.id = "nav_" + page_data.div_name;
+        nav_div.innerHTML = page_data.name;
+        nav_div.className = "nav_item";
+        nav_div.setAttribute("page_div", page_data.div_name);
+        nav_div.addEventListener("click", function(e) {
+            open_page(this.getAttribute("page_div"));
+            sparks_animation(e);
+        });
+
+        var page_div = document.createElement("div");
+        page_div.className = "page transparent display_none";
+        page_div.id = page_data.div_name;
+        page_div.innerHTML = page_data.content;
+
+        return [nav_div, page_div];
+    }
+}
+
+function open_post(post_id) {
+    get("utilities/get_post_by_id.php", {"post_id": post_id}, true, function(response) {
+        console.log(response);
     });
 }
 
 function load_posts(date) {
     get("utilities/get_posts.php", {"date": date}, true, function(new_posts) {
         var blog_page = select("id", "blog_page");
-
-        for (var i in new_posts) {
-            var post_div = document.createElement('div');
-            post_div.className = "post";
-            post_div.id = "post_" + new_posts[i].id;
-            blog_page.js_object.appendChild(post_div);
-
-            var author_div = document.createElement('div');
-            author_div.className = "post_author";
-            author_div.setAttribute("style", "background-image: url(./resources/authors/"
-                + new_posts[i].author + ".png);");
-            post_div.appendChild(author_div);
-
-            var title_div = document.createElement('div');
-            title_div.className = "post_title";
-            title_div.innerHTML = new_posts[i].title;
-            post_div.appendChild(title_div);
-
-            var date_div = document.createElement('div');
-            date_div.className = "post_date";
-            date_div.innerHTML = new Date(new_posts[i].date.substr(0, 10)).toLocaleDateString();
-            post_div.appendChild(date_div);
-
-            var style = new_posts[i].style.replace(/<current_post_id>/g, new_posts[i].id);
-            var style_elem = document.createElement("style");
-            style_elem.innerHTML = style;
-
-            var content_div = document.createElement('div');
-            content_div.className = "post_content";
-            content_div.innerHTML = new_posts[i].content;
-            content_div.appendChild(style_elem);
-            post_div.appendChild(content_div);
-
-            posts_buffer_size--;
-        }
+        add_posts_to_element(new_posts, blog_page);
 
         if (new_posts.length == 0 || posts_buffer_size < 1) {
-            post_div = document.createElement('div');
+            var post_div = document.createElement('div');
             post_div.id = "no_more_posts";
             post_div.innerHTML = "No more posts.";
             blog_page.js_object.appendChild(post_div);
@@ -135,10 +144,63 @@ function load_posts(date) {
     });
 }
 
+function add_posts_to_element(posts, elem) {
+    for (var i in posts) {
+        var post_div = document.createElement('div');
+        post_div.className = "post";
+        post_div.id = "post_" + posts[i].id;
+        post_div.setAttribute("num", posts[i].id);
+        elem.js_object.appendChild(post_div);
+
+        var author_div = document.createElement('div');
+        author_div.className = "post_author";
+        author_div.setAttribute("style", "background-image: url(./resources/authors/"
+            + posts[i].author + ".png);");
+        post_div.appendChild(author_div);
+
+        var title_div = document.createElement('div');
+        title_div.className = "post_title";
+        title_div.innerHTML = posts[i].title;
+        post_div.appendChild(title_div);
+        title_div.addEventListener("click", function(e) {
+            window.location.hash = "3/post/" + e.target.parentNode.getAttribute("num");
+        });
+
+        var date_div = document.createElement('div');
+        date_div.className = "post_date";
+        date_div.innerHTML = new Date(posts[i].date.substr(0, 10)).toLocaleDateString();
+        post_div.appendChild(date_div);
+
+        var style = posts[i].style.replace(/<current_post_id>/g, posts[i].id);
+        var style_elem = document.createElement("style");
+        style_elem.innerHTML = style;
+
+        var content_div = document.createElement('div');
+        content_div.className = "post_content";
+        content_div.innerHTML = posts[i].content;
+        content_div.appendChild(style_elem);
+        post_div.appendChild(content_div);
+
+        posts_buffer_size--;
+    }
+}
+
 function on_hash_change() {
     if (location.href.indexOf('#') != -1) {
-        if (location.href[location.href.indexOf('#') + 1] == "1" ) {
+        if (location.href[location.href.indexOf('#') + 1] == "1") {
             open_page(location.href.substring(location.href.indexOf("#") + 3) + "_page");
+        } else if (location.href[location.href.indexOf('#') + 1] == "2") {
+            open_page("search_page");
+            if (current_page == "search_page") {
+                var url_contents = window.location.hash.split("/");
+                search_posts(url_contents[url_contents.length - 1]);
+            }
+        } else if (location.href[location.href.indexOf('#') + 1] == "3") {
+            open_page("post_page");
+            if (current_page == "post_page") {
+                url_contents = window.location.hash.split("/");
+                open_post(url_contents[url_contents.length - 1]);
+            }
         }
     } else {
         open_page("home_page");
@@ -188,4 +250,8 @@ function update_spark_location(spark_divs) {
     if (spark_divs[0] != undefined) {
         requestAnimationFrame(function() { update_spark_location(spark_divs) });
     }
+}
+
+function search_posts(query) {
+    console.log(query);
 }

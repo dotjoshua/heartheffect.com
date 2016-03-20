@@ -171,7 +171,7 @@ function manage_images() {
 function get_selected_post(callback) {
     var post_id = select("id", "post_select").js_object.value;
 
-    get("utilities/get_post_by_id.php", {"post_id": post_id}, true, function(response) {
+    get("../utilities/get_post_by_id.php", {"post_id": post_id}, true, function(response) {
         if (response.error != undefined) {
             alert(response.error, "Error");
             return;
@@ -247,7 +247,7 @@ function update_editor_context(value, callback) {
             select("id", "style_editor").js_object.value.replace(/<current_post_id>/g, 0);
 
         select("id", "title_input").js_object.value = "";
-        select("id", "month_select").js_object.value = ("0" + new Date().getMonth() + 1).slice(-2);
+        select("id", "month_select").js_object.value = ("0" + (new Date().getMonth() + 1)).slice(-2);
         select("id", "day_select").js_object.value = ("0" + new Date().getDate()).slice(-2);
         select("id", "year_select").js_object.value = new Date().getFullYear();
         select("id", "author_select").js_object.value = "";
