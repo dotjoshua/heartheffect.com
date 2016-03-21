@@ -41,4 +41,19 @@
         -o-transition: color 0.5s;
         transition: color 0.5s;
     }
+
+    #search_input {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        box-sizing: border-box;
+    }
+
+    .nav_item {
+        padding-top: 38px;
+    }
+
+    body {
+        padding-top: 70px;
+    }
 }
