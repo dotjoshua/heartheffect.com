@@ -1,5 +1,5 @@
 @media screen and (max-width: 800px) {
-    #blog_page {
+    #blog_page, #post_page {
         padding-left: 5px;
     }
 
