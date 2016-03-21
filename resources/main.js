@@ -266,5 +266,19 @@ function update_spark_location(spark_divs) {
 }
 
 function search_posts(query) {
-    console.log(query);
+    get("utilities/search_posts.php", {"query": query}, true, function(response) {
+        if (response.length == 0) {
+            alert("No posts matched your search.", "Aw.",
+                {
+                    button_text: ":(",
+                    show_cancel: false,
+                    button_callback: function() {
+                        open_page("blog_page");
+                        close_alert();
+                    }});
+        } else {
+            select("id", "search_page").js_object.innerHTML = "";
+            add_posts_to_element(response, select("id", "search_page"));
+        }
+    });
 }
