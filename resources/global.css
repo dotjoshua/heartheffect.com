@@ -55,6 +55,7 @@ button:focus {
 .alert_button {
     cursor: pointer;
     padding-left: 10px;
+    color: #333;
     -webkit-transition: color 0.5s;
     -moz-transition: color 0.5s;
     -ms-transition: color 0.5s;

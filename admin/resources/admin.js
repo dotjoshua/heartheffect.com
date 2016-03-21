@@ -33,17 +33,18 @@ function on_editor_load() {
     select("id", "action_select").js_object.addEventListener("change", function(e) {
         if (e.target.value == "edit_post") {
             if (editor.getValue() != "") {
-                alert("You have unpublished changes. Are you sure you want to continue?",
-                    "Ah!",
-                    "Yes, I'm sure.",
-                    true,
-                    function() {
-                        update_editor_context(e.target.value);
-                        close_alert();
-                    },
-                    function() {
-                        e.target.value = "new_post";
-                        close_alert();
+                alert("You have unpublished changes. Are you sure you want to continue?", "Ah!",
+                    {
+                        button_text: "Yes, I'm sure.",
+                        show_cancel: true,
+                        button_callback: function() {
+                            update_editor_context(e.target.value);
+                            close_alert();
+                        },
+                        cancel_callback: function() {
+                            e.target.value = "new_post";
+                            close_alert();
+                        }
                     }
                 );
             } else {
@@ -144,9 +145,16 @@ function manage_images() {
         progress_inner.id = "progress_inner";
         progress_outer.appendChild(progress_inner);
 
-        alert(outer_div.outerHTML, "Images", "upload", true, function() {
-            upload_image(manage_images);
-        }, null, "done");
+        alert(outer_div.outerHTML, "Images",
+            {
+                button_text: "upload",
+                show_cancel: true,
+                button_callback: function() {
+                    upload_image(manage_images);
+                },
+                cancel_button_text: "done"
+            }
+        );
 
         select("id", "image_viewer").js_object.addEventListener("click", function(e) {
             if (e.srcElement.className == "image_icon") {
@@ -264,87 +272,103 @@ function update_editor_context(value, callback) {
 function update_current_post() {
     if (!is_ready()) return;
 
-    alert("Are you sure you want to save changes?", "Just making sure...", "yes", true, function() {
-        alert("", "Updating...", "ok", false);
+    alert("Are you sure you want to save changes?", "Just making sure...",
+        {
+            button_text: "yes",
+            show_cancel: true,
+            button_callback: function () {
+                alert("", "Updating...", {show_cancel: false});
 
-        var date = select("id", "year_select").js_object.value
-            + "-" + select("id", "month_select").js_object.value
-            + "-" + select("id", "day_select").js_object.value;
+                var date = select("id", "year_select").js_object.value
+                    + "-" + select("id", "month_select").js_object.value
+                    + "-" + select("id", "day_select").js_object.value;
 
-        post("utilities/update_post.php", {
-            "token": token,
-            "post_id": select("id", "post_select").js_object.value,
-            "title": select("id", "title_input").js_object.value,
-            "author": select("id", "author_select").js_object.value,
-            "category": select("id", "category_select").js_object.value,
-            "tags": select("id", "tags_input").js_object.value,
-            "date": date,
-            "content": editor.getValue(),
-            "style": select("id", "style_editor").js_object.value
-        }, true, function(response) {
-            if (response["error"] == undefined) {
-                set_token(response["token"]);
-                alert("Your changes are now live.", "Success!");
-            } else {
-                alert(response["error"], "Error");
+                post("utilities/update_post.php", {
+                    "token": token,
+                    "post_id": select("id", "post_select").js_object.value,
+                    "title": select("id", "title_input").js_object.value,
+                    "author": select("id", "author_select").js_object.value,
+                    "category": select("id", "category_select").js_object.value,
+                    "tags": select("id", "tags_input").js_object.value,
+                    "date": date,
+                    "content": editor.getValue(),
+                    "style": select("id", "style_editor").js_object.value
+                }, true, function (response) {
+                    if (response["error"] == undefined) {
+                        set_token(response["token"]);
+                        alert("Your changes are now live.", "Success!");
+                    } else {
+                        alert(response["error"], "Error");
+                    }
+                });
             }
-        });
-    });
+        }
+    );
 }
 
 function create_new_post() {
     if (!is_ready()) return;
 
-    alert("Are you sure you want to publish this post?", "Just making sure...", "yes", true, function() {
-        alert("", "Posting...", "ok", false);
+    alert("Are you sure you want to publish this post?", "Just making sure...",
+        {
+            button_text: "yes",
+            show_cancel: true,
+            button_callback: function() {
+                alert("", "Posting...", {show_cancel: false});
 
-        var date = select("id", "year_select").js_object.value
-            + "-" + select("id", "month_select").js_object.value
-            + "-" + select("id", "day_select").js_object.value;
+                var date = select("id", "year_select").js_object.value
+                    + "-" + select("id", "month_select").js_object.value
+                    + "-" + select("id", "day_select").js_object.value;
 
-        post("utilities/create_post.php", {
-            "token": token,
-            "title": select("id", "title_input").js_object.value,
-            "author": select("id", "author_select").js_object.value,
-            "category": select("id", "category_select").js_object.value,
-            "tags": select("id", "tags_input").js_object.value,
-            "date": date,
-            "content": editor.getValue(),
-            "style": select("id", "style_editor").js_object.value
-        }, true, function(response) {
-            if (response["error"] == undefined) {
-                set_token(response["token"]);
+                post("utilities/create_post.php", {
+                    "token": token,
+                    "title": select("id", "title_input").js_object.value,
+                    "author": select("id", "author_select").js_object.value,
+                    "category": select("id", "category_select").js_object.value,
+                    "tags": select("id", "tags_input").js_object.value,
+                    "date": date,
+                    "content": editor.getValue(),
+                    "style": select("id", "style_editor").js_object.value
+                }, true, function (response) {
+                    if (response["error"] == undefined) {
+                        set_token(response["token"]);
 
-                select("id", "action_select").js_object.value = "edit_post";
-                update_editor_context("edit_post");
+                        select("id", "action_select").js_object.value = "edit_post";
+                        update_editor_context("edit_post");
 
-                alert("Your new post is now live.", "Success!");
-            } else {
-                alert(response["error"], "Error");
+                        alert("Your new post is now live.", "Success!");
+                    } else {
+                        alert(response["error"], "Error");
+                    }
+                });
             }
-        });
-    });
+        }
+    );
 }
 
 function delete_current_post() {
-    alert("Are you sure you want to delete this post? This cannot be undone.",
-        "Ah!", "yes, delete this post", true, function() {
-            alert("", "Deleting...", "ok", false);
-
-            post("utilities/delete_post.php", {
-                "token": token,
-                "post_id": select("id", "post_select").js_object.value
-            }, true, function(response) {
-                if (response["error"] == undefined) {
-                    set_token(response["token"]);
-                    update_editor_context("edit_post", function() {
-                        alert("The post has been deleted.", "Success!");
-                    });
-                } else {
-                    alert(response["error"], "Error");
-                }
-            });
-    });
+    alert("Are you sure you want to delete this post? This cannot be undone.", "Ah!",
+        {
+            button_text: "yes, delete this post",
+            show_cancel: true,
+            button_callback: function() {
+                alert("", "Deleting...", {show_cancel: false});
+                post("utilities/delete_post.php", {
+                    "token": token,
+                    "post_id": select("id", "post_select").js_object.value
+                }, true, function (response) {
+                    if (response["error"] == undefined) {
+                        set_token(response["token"]);
+                        update_editor_context("edit_post", function () {
+                            alert("The post has been deleted.", "Success!");
+                        });
+                    } else {
+                        alert(response["error"], "Error");
+                    }
+                });
+            }
+        }
+    );
 }
 
 function upload_image(callback) {
@@ -480,11 +504,17 @@ function set_token(new_token) {
             location.reload();
         }, 60000);
 
-        alert("Logging out in 1 minute due to inactivity.", "Alert", "I'm still here", false, function() {
-            close_alert();
-            refresh_token(function() {
-                clearTimeout(logout);
-            });
-        });
+        alert("Logging out in 1 minute due to inactivity.", "Alert",
+            {
+                button_text: "I'm still here",
+                show_cancel: false,
+                button_callback: function() {
+                    close_alert();
+                    refresh_token(function() {
+                        clearTimeout(logout);
+                    });
+                }
+            }
+        );
     }, 1740000);
 }

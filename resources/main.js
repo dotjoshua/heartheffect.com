@@ -121,7 +121,18 @@ function load_pages() {
 
 function open_post(post_id) {
     get("utilities/get_post_by_id.php", {"post_id": post_id}, true, function(response) {
-        add_posts_to_element(response, select("id", "post_page"));
+        if (response.length == 0) {
+            alert("This post does not exist. It may have been deleted, or your link may be incomplete.", "Ah!",
+                {
+                    button_text: ":(",
+                    show_cancel: false,
+                    button_callback: function() {
+                        open_page("blog_page");
+                        close_alert();
+                }});
+        } else {
+            add_posts_to_element(response, select("id", "post_page"));
+        }
     });
 }
 
