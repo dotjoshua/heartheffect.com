@@ -6,7 +6,7 @@
     transition: padding, opacity 0.5s;
 }
 
-.post, #no_more_posts {
+.post, .no_more_posts {
     padding: 10px;
     background: #555;
     color: #ddd;

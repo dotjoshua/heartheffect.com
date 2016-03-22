@@ -143,7 +143,7 @@ function load_posts(date) {
 
         if (new_posts.length == 0 || posts_buffer_size < 1) {
             var post_div = document.createElement('div');
-            post_div.id = "no_more_posts";
+            post_div.className = "no_more_posts";
             post_div.innerHTML = "No more posts.";
             blog_page.js_object.appendChild(post_div);
 
@@ -267,17 +267,13 @@ function update_spark_location(spark_divs) {
 
 function search_posts(query) {
     get("utilities/search_posts.php", {"query": query}, true, function(response) {
+        select("id", "search_page").js_object.innerHTML = "";
         if (response.length == 0) {
-            alert("No posts matched your search.", "Aw.",
-                {
-                    button_text: ":(",
-                    show_cancel: false,
-                    button_callback: function() {
-                        open_page("blog_page");
-                        close_alert();
-                    }});
+            var no_items = document.createElement("div");
+            no_items.className = "no_more_posts";
+            no_items.innerText = "No results matched your search :(";
+            select("id", "search_page").js_object.appendChild(no_items);
         } else {
-            select("id", "search_page").js_object.innerHTML = "";
             add_posts_to_element(response, select("id", "search_page"));
         }
     });
