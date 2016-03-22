@@ -126,8 +126,9 @@ function manage_images() {
         }
         outer_div.appendChild(image_viewer);
 
-        var image_url = document.createElement("div");
+        var image_url = document.createElement("input");
         image_url.id = "image_url";
+        image_url.setAttribute("readonly", "");
         outer_div.appendChild(image_url);
 
 
@@ -164,8 +165,12 @@ function manage_images() {
                 }
                 e.srcElement.className += " image_icon_selected";
 
-                select("id", "image_url").js_object.textContent = e.srcElement.getAttribute("url");
+                select("id", "image_url").js_object.value = e.srcElement.getAttribute("url");
             }
+        });
+
+        select("id", "image_url").js_object.addEventListener("click", function(e) {
+            e.target.setSelectionRange(0, e.target.value.length);
         });
 
         if (select("class", "image_icon") != []) {
