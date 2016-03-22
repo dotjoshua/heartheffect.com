@@ -1,13 +1,13 @@
-function alert(message, title, properties) {
-    properties = (properties == null) ? {} : properties;
+function alert(message, title, args) {
+    args = (args == null) ? {} : args;
     message = (message == null) ? "" : message;
     title = (title == null) ? "" : title;
 
-    var button_text = properties.button_text;
-    var show_cancel = properties.show_cancel;
-    var button_callback = properties.button_callback;
-    var cancel_callback = properties.cancel_callback;
-    var cancel_button_text = properties.cancel_button_text;
+    var button_text = args.button_text;
+    var show_cancel = args.show_cancel;
+    var button_callback = args.button_callback;
+    var cancel_callback = args.cancel_callback;
+    var cancel_button_text = args.cancel_button_text;
 
     button_text = (button_text == undefined) ? "ok" : button_text;
     button_callback = (button_callback == undefined) ? function() {close_alert()} : button_callback;
@@ -85,56 +85,41 @@ function ƪ(js_object) {
     return this;
 }
 
-function get(url, data, json_parse, callback) {
-    if (json_parse == undefined) json_parse = true;
-    if (callback == undefined) callback = function(result) {};
+function send_request(args) {
+    args.url = (args.url == undefined) ? "" : args.url;
+    args.data = (args.data == undefined) ? {} : args.data;
+    args.post = (args.post == undefined) ? false : args.post;
+    args.async = (args.async == undefined) ? true : args.async;
+    args.parse_json = (args.parse_json == undefined) ? true : args.parse_json;
+    args.callback = (args.callback == undefined) ? function(result) {} : args.callback;
 
-    var param_string =  "?";
-    var prefix = "";
-    for (var property in data) {
-        if (data.hasOwnProperty(property)) {
-            param_string += prefix + property + "=" + encodeURIComponent(data[property]);
+    if (!args.post) {
+        var param_string =  "?";
+        var prefix = "";
+        for (var property in args.data) {
+            if (args.data.hasOwnProperty(property)) {
+                param_string += prefix + property + "=" + encodeURIComponent(args.data[property]);
+            }
+            prefix = "&";
         }
-        prefix = "&";
+        args.url += param_string;
     }
 
     var request = new XMLHttpRequest();
-    request.open("GET", url + param_string, true);
-    request.onloadend = function() {
-        if (json_parse) {
-            var result;
-            try {
-                result = JSON.parse(request.responseText);
-            } catch (ex) {
-                result = {"error": request.responseText};
-            }
-            callback(result);
-        } else {
-            callback(request.responseText);
-        }
-    };
-    request.send();
-}
-
-function post(url, data, json_parse, callback) {
-    if (json_parse == undefined) json_parse = true;
-    if (callback == undefined) callback = function(result) {};
-
-    var request = new XMLHttpRequest();
-    request.open("POST", url, true);
+    request.open(args.post ? "POST" : "GET", args.url, args.async);
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     request.onloadend = function() {
-        if (json_parse) {
+        if (args.parse_json) {
             var result;
             try {
                 result = JSON.parse(request.responseText);
             } catch (ex) {
                 result = {"error": request.responseText};
             }
-            callback(result);
+            args.callback(result);
         } else {
-            callback(request.responseText);
+            args.callback(request.responseText);
         }
     };
-    request.send(JSON.stringify(data));
+    request.send(args.post ? JSON.stringify(args.data) : undefined);
 }

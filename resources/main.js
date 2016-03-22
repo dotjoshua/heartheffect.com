@@ -68,29 +68,32 @@ function open_page(page_div_id) {
 }
 
 function load_pages() {
-    get("utilities/get_pages.php", {}, true, function(response) {
-        var pages = [];
-        for (var i in response) {
-            var page = {};
-            page.location = response[i];
-            page.name = response[i].replace(/_/g, ' ').substring(2, response[i].lastIndexOf("."));
-            page.div_name = response[i].substring(2, response[i].lastIndexOf(".")) + "_page";
-            pages[response[i].substring(0, 1)] = page;
+    send_request({
+        url: "utilities/get_pages.php",
+        callback: function(response) {
+            var pages = [];
+            for (var i in response) {
+                var page = {};
+                page.location = response[i];
+                page.name = response[i].replace(/_/g, ' ').substring(2, response[i].lastIndexOf("."));
+                page.div_name = response[i].substring(2, response[i].lastIndexOf(".")) + "_page";
+                pages[response[i].substring(0, 1)] = page;
+            }
+
+            for (i in pages) {
+                var request = new XMLHttpRequest();
+                request.open("GET", "pages/" + pages[i].location, false);
+                request.send();
+                pages[i].content = request.responseText;
+
+                var page_divs = create_page_divs(pages[i]);
+                select("id", "nav").js_object.appendChild(page_divs[0]);
+                select("id", "content").js_object.appendChild(page_divs[1]);
+            }
+
+            on_hash_change();
+            while (load_posts(last_date_loaded));
         }
-
-        for (i in pages) {
-            var request = new XMLHttpRequest();
-            request.open("GET", "pages/" + pages[i].location, false);
-            request.send();
-            pages[i].content = request.responseText;
-
-            var page_divs = create_page_divs(pages[i]);
-            select("id", "nav").js_object.appendChild(page_divs[0]);
-            select("id", "content").js_object.appendChild(page_divs[1]);
-        }
-
-        on_hash_change();
-        while (load_posts(last_date_loaded));
     });
 
     var hidden_pages = [{"div_name": "post_page", "content": ""}];
@@ -120,37 +123,45 @@ function load_pages() {
 }
 
 function open_post(post_id) {
-    get("utilities/get_post_by_id.php", {"post_id": post_id}, true, function(response) {
-        if (response.length == 0) {
-            alert("This post does not exist. It may have been deleted, or your link may be incomplete.", "Ah!",
-                {
-                    button_text: ":(",
-                    show_cancel: false,
-                    button_callback: function() {
-                        open_page("blog_page");
-                        close_alert();
-                }});
-        } else {
-            add_posts_to_element(response, select("id", "post_page"));
+    send_request({
+        url: "utilities/get_post_by_id.php",
+        data: {post_id: post_id},
+        callback: function(response) {
+            if (response.length == 0) {
+                alert("This post does not exist. It may have been deleted, or your link may be incomplete.", "Ah!",
+                    {
+                        button_text: ":(",
+                        show_cancel: false,
+                        button_callback: function() {
+                            open_page("blog_page");
+                            close_alert();
+                        }});
+            } else {
+                add_posts_to_element(response, select("id", "post_page"));
+            }
         }
     });
 }
 
 function load_posts(date) {
-    get("utilities/get_posts.php", {"date": date}, true, function(new_posts) {
-        var blog_page = select("id", "blog_page");
-        add_posts_to_element(new_posts, blog_page);
+    send_request({
+        url:  "utilities/get_posts.php",
+        data: {"date": date},
+        callback: function(new_posts) {
+            var blog_page = select("id", "blog_page");
+            add_posts_to_element(new_posts, blog_page);
 
-        if (new_posts.length == 0 || posts_buffer_size < 1) {
-            var post_div = document.createElement('div');
-            post_div.className = "no_more_posts";
-            post_div.innerHTML = "No more posts.";
-            blog_page.js_object.appendChild(post_div);
+            if (new_posts.length == 0 || posts_buffer_size < 1) {
+                var post_div = document.createElement('div');
+                post_div.className = "no_more_posts";
+                post_div.innerHTML = "No more posts.";
+                blog_page.js_object.appendChild(post_div);
 
-            posts_buffer_size = 10;
-        } else {
-            last_date_loaded = new_posts[new_posts.length - 1].date.substr(0, 10);
-            load_posts(last_date_loaded);
+                posts_buffer_size = 10;
+            } else {
+                last_date_loaded = new_posts[new_posts.length - 1].date.substr(0, 10);
+                load_posts(last_date_loaded);
+            }
         }
     });
 }
@@ -165,8 +176,7 @@ function add_posts_to_element(posts, elem) {
 
         var author_div = document.createElement('div');
         author_div.className = "post_author";
-        author_div.setAttribute("style", "background-image: url(./resources/authors/"
-            + posts[i].author + ".png);");
+        author_div.setAttribute("style", "background-image: url(./resources/authors/" + posts[i].author + ".png);");
         post_div.appendChild(author_div);
 
         var title_div = document.createElement('div');
@@ -266,15 +276,19 @@ function update_spark_location(spark_divs) {
 }
 
 function search_posts(query) {
-    get("utilities/search_posts.php", {"query": query}, true, function(response) {
-        select("id", "search_page").js_object.innerHTML = "";
-        if (response.length == 0) {
-            var no_items = document.createElement("div");
-            no_items.className = "no_more_posts";
-            no_items.innerText = "No results matched your search :(";
-            select("id", "search_page").js_object.appendChild(no_items);
-        } else {
-            add_posts_to_element(response, select("id", "search_page"));
+    send_request({
+        url: "utilities/search_posts.php",
+        data: {query: query},
+        callback: function(response) {
+            select("id", "search_page").js_object.innerHTML = "";
+            if (response.length == 0) {
+                var no_items = document.createElement("div");
+                no_items.className = "no_more_posts";
+                no_items.innerText = "No results matched your search :(";
+                select("id", "search_page").js_object.appendChild(no_items);
+            } else {
+                add_posts_to_element(response, select("id", "search_page"));
+            }
         }
     });
 }

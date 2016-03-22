@@ -26,7 +26,7 @@ function on_editor_load() {
     });
     editor.setOption("theme", "lesser-dark");
     editor.setSize("100%", "100%");
-    editor.on("change", function(instance, change_obj) {
+    editor.on("change", function(instance) {
         select("id", "preview_post_content").js_object.innerHTML = instance.getValue();
     });
 
@@ -116,100 +116,109 @@ function manage_images() {
 
     var image_viewer = document.createElement("div");
     image_viewer.id = "image_viewer";
-    get("utilities/get_images.php", {}, true, function(images) {
-        for (var i = 0; i < images.length; i++) {
-            var image = document.createElement("div");
-            image.setAttribute("style", "background: url(../images/" + images[i].image_url + "); background-size: cover;");
-            image.setAttribute("url", "http://heartheffect.com/images/" + images[i].image_url);
-            image.className = "image_icon";
-            image_viewer.appendChild(image);
-        }
-        outer_div.appendChild(image_viewer);
 
-        var image_url = document.createElement("input");
-        image_url.id = "image_url";
-        image_url.setAttribute("readonly", "");
-        outer_div.appendChild(image_url);
-
-
-        var image_choose = document.createElement("input");
-        image_choose.setAttribute("type", "file");
-        image_choose.id = "image_choose";
-        outer_div.appendChild(image_choose);
-
-        var progress_outer = document.createElement("div");
-        progress_outer.id = "progress_outer";
-        progress_outer.className = "display_none";
-        outer_div.appendChild(progress_outer);
-
-        var progress_inner = document.createElement("div");
-        progress_inner.id = "progress_inner";
-        progress_outer.appendChild(progress_inner);
-
-        alert(outer_div.outerHTML, "Images",
-            {
-                button_text: "upload",
-                show_cancel: true,
-                button_callback: function() {
-                    upload_image(manage_images);
-                },
-                cancel_button_text: "done"
+    send_request({
+        url: "utilities/get_images.php",
+        callback: function(images) {
+            for (var i = 0; i < images.length; i++) {
+                var image = document.createElement("div");
+                image.setAttribute("style", "background: url(../images/" + images[i]["image_url"]
+                    + "); background-size: cover;");
+                image.setAttribute("url", "http://heartheffect.com/images/" + images[i]["image_url"]);
+                image.className = "image_icon";
+                image_viewer.appendChild(image);
             }
-        );
+            outer_div.appendChild(image_viewer);
 
-        select("id", "image_viewer").js_object.addEventListener("click", function(e) {
-            if (e.srcElement.className == "image_icon") {
-                var image_icons = select("class", "image_icon");
-                for (var i = 0; i < image_icons.length; i++) {
-                    image_icons[i].remove_class("image_icon_selected");
+            var image_url = document.createElement("input");
+            image_url.id = "image_url";
+            image_url.setAttribute("readonly", "");
+            outer_div.appendChild(image_url);
+
+
+            var image_choose = document.createElement("input");
+            image_choose.setAttribute("type", "file");
+            image_choose.id = "image_choose";
+            outer_div.appendChild(image_choose);
+
+            var progress_outer = document.createElement("div");
+            progress_outer.id = "progress_outer";
+            progress_outer.className = "display_none";
+            outer_div.appendChild(progress_outer);
+
+            var progress_inner = document.createElement("div");
+            progress_inner.id = "progress_inner";
+            progress_outer.appendChild(progress_inner);
+
+            alert(outer_div.outerHTML, "Images",
+                {
+                    button_text: "upload",
+                    show_cancel: true,
+                    button_callback: function() {
+                        upload_image(manage_images);
+                    },
+                    cancel_button_text: "done"
                 }
-                e.srcElement.className += " image_icon_selected";
+            );
 
-                select("id", "image_url").js_object.value = e.srcElement.getAttribute("url");
+            select("id", "image_viewer").js_object.addEventListener("click", function(e) {
+                if (e.srcElement.className == "image_icon") {
+                    var image_icons = select("class", "image_icon");
+                    for (var i = 0; i < image_icons.length; i++) {
+                        image_icons[i].remove_class("image_icon_selected");
+                    }
+                    e.srcElement.className += " image_icon_selected";
+
+                    select("id", "image_url").js_object.value = e.srcElement.getAttribute("url");
+                }
+            });
+
+            select("id", "image_url").js_object.addEventListener("click", function(e) {
+                e.target.setSelectionRange(0, e.target.value.length);
+            });
+
+            if (select("class", "image_icon") != []) {
+                select("class", "image_icon")[0].js_object.click();
             }
-        });
 
-        select("id", "image_url").js_object.addEventListener("click", function(e) {
-            e.target.setSelectionRange(0, e.target.value.length);
-        });
-
-        if (select("class", "image_icon") != []) {
-            select("class", "image_icon")[0].js_object.click();
+            refresh_token();
         }
-
-        refresh_token();
     });
 }
 
 function get_selected_post(callback) {
     var post_id = select("id", "post_select").js_object.value;
 
-    get("../utilities/get_post_by_id.php", {"post_id": post_id}, true, function(response) {
-        if (response.error != undefined) {
-            alert(response.error, "Error");
-            return;
+    send_request({
+        url: "../utilities/get_post_by_id.php",
+        data: {post_id: post_id},
+        callback: function(response) {
+            if (response.error != undefined) {
+                alert(response.error, "Error");
+                return;
+            }
+
+            var post = response[0];
+            var date_info = post.date.split(" ")[0].split("-");
+
+            select("id", "year_select").js_object.value = date_info[0];
+            select("id", "month_select").js_object.value = date_info[1];
+            select("id", "day_select").js_object.value = date_info[2];
+            select("id", "title_input").js_object.value = post.title;
+            select("id", "author_select").js_object.value = post.author;
+            select("id", "category_select").js_object.value = post.category;
+            select("id", "tags_input").js_object.value = post.tags;
+
+            editor.setValue(post.content);
+            select("id", "style_editor").js_object.value = post.style;
+            select("id", "preview_style").js_object.innerHTML = post.style.replace(/<current_post_id>/g, "0");
+
+            on_author_change();
+            on_title_change();
+            on_date_change();
+
+            refresh_token(callback);
         }
-
-        var post = response[0];
-        var date_info = post.date.split(" ")[0].split("-");
-
-        select("id", "year_select").js_object.value = date_info[0];
-        select("id", "month_select").js_object.value = date_info[1];
-        select("id", "day_select").js_object.value = date_info[2];
-        select("id", "title_input").js_object.value = post.title;
-        select("id", "author_select").js_object.value = post.author;
-        select("id", "category_select").js_object.value = post.category;
-        select("id", "tags_input").js_object.value = post.tags;
-
-        editor.setValue(post.content);
-        select("id", "style_editor").js_object.value = post.style;
-        select("id", "preview_style").js_object.innerHTML = post.style.replace(/<current_post_id>/g, 0);
-
-        on_author_change();
-        on_title_change();
-        on_date_change();
-
-        refresh_token(callback);
     });
 }
 
@@ -233,25 +242,28 @@ function update_editor_context(value, callback) {
     }
 
     if (value == "edit_post") {
-        get("utilities/get_posts_info.php", {}, true, function(posts) {
-            if (posts.error != undefined) {
-                alert(posts.error, "Error");
-                return;
+        send_request({
+            url: "utilities/get_posts_info.php",
+            callback: function(posts) {
+                if (posts.error != undefined) {
+                    alert(posts.error, "Error");
+                    return;
+                }
+
+                var post_select = select("id", "post_select");
+                post_select.js_object.innerHTML = "";
+
+                for (i = 0; i < posts.length; i++) {
+                    var new_option = document.createElement("option");
+                    new_option.setAttribute("value", posts[i].id);
+                    new_option.innerHTML = posts[i].title;
+                    post_select.js_object.appendChild(new_option);
+                }
+
+                select("id", "action_button").js_object.innerHTML = "update";
+
+                get_selected_post(callback);
             }
-
-            var post_select = select("id", "post_select");
-            post_select.js_object.innerHTML = "";
-
-            for (i = 0; i < posts.length; i++) {
-                var new_option = document.createElement("option");
-                new_option.setAttribute("value", posts[i].id);
-                new_option.innerHTML = posts[i].title;
-                post_select.js_object.appendChild(new_option);
-            }
-
-            select("id", "action_button").js_object.innerHTML = "update";
-
-            get_selected_post(callback);
         });
     } else {
         editor.setValue("");
@@ -288,22 +300,27 @@ function update_current_post() {
                     + "-" + select("id", "month_select").js_object.value
                     + "-" + select("id", "day_select").js_object.value;
 
-                post("utilities/update_post.php", {
-                    "token": token,
-                    "post_id": select("id", "post_select").js_object.value,
-                    "title": select("id", "title_input").js_object.value,
-                    "author": select("id", "author_select").js_object.value,
-                    "category": select("id", "category_select").js_object.value,
-                    "tags": select("id", "tags_input").js_object.value,
-                    "date": date,
-                    "content": editor.getValue(),
-                    "style": select("id", "style_editor").js_object.value
-                }, true, function (response) {
-                    if (response["error"] == undefined) {
-                        set_token(response["token"]);
-                        alert("Your changes are now live.", "Success!");
-                    } else {
-                        alert(response["error"], "Error");
+                send_request({
+                    post: true,
+                    url: "utilities/update_post.php",
+                    data: {
+                        token: token,
+                        post_id: select("id", "post_select").js_object.value,
+                        title: select("id", "title_input").js_object.value,
+                        author: select("id", "author_select").js_object.value,
+                        category: select("id", "category_select").js_object.value,
+                        tags: select("id", "tags_input").js_object.value,
+                        date: date,
+                        content: editor.getValue(),
+                        style: select("id", "style_editor").js_object.value
+                    },
+                    callback: function (response) {
+                        if (response["error"] == undefined) {
+                            set_token(response["token"]);
+                            alert("Your changes are now live.", "Success!");
+                        } else {
+                            alert(response["error"], "Error");
+                        }
                     }
                 });
             }
@@ -325,25 +342,30 @@ function create_new_post() {
                     + "-" + select("id", "month_select").js_object.value
                     + "-" + select("id", "day_select").js_object.value;
 
-                post("utilities/create_post.php", {
-                    "token": token,
-                    "title": select("id", "title_input").js_object.value,
-                    "author": select("id", "author_select").js_object.value,
-                    "category": select("id", "category_select").js_object.value,
-                    "tags": select("id", "tags_input").js_object.value,
-                    "date": date,
-                    "content": editor.getValue(),
-                    "style": select("id", "style_editor").js_object.value
-                }, true, function (response) {
-                    if (response["error"] == undefined) {
-                        set_token(response["token"]);
+                send_request({
+                    post: true,
+                    url: "utilities/create_post.php",
+                    data: {
+                        token: token,
+                        title: select("id", "title_input").js_object.value,
+                        author: select("id", "author_select").js_object.value,
+                        category: select("id", "category_select").js_object.value,
+                        tags: select("id", "tags_input").js_object.value,
+                        date: date,
+                        content: editor.getValue(),
+                        style: select("id", "style_editor").js_object.value
+                    },
+                    callback: function (response) {
+                        if (response["error"] == undefined) {
+                            set_token(response["token"]);
 
-                        select("id", "action_select").js_object.value = "edit_post";
-                        update_editor_context("edit_post");
+                            select("id", "action_select").js_object.value = "edit_post";
+                            update_editor_context("edit_post");
 
-                        alert("Your new post is now live.", "Success!");
-                    } else {
-                        alert(response["error"], "Error");
+                            alert("Your new post is now live.", "Success!");
+                        } else {
+                            alert(response["error"], "Error");
+                        }
                     }
                 });
             }
@@ -358,17 +380,23 @@ function delete_current_post() {
             show_cancel: true,
             button_callback: function() {
                 alert("", "Deleting...", {show_cancel: false});
-                post("utilities/delete_post.php", {
-                    "token": token,
-                    "post_id": select("id", "post_select").js_object.value
-                }, true, function (response) {
-                    if (response["error"] == undefined) {
-                        set_token(response["token"]);
-                        update_editor_context("edit_post", function () {
-                            alert("The post has been deleted.", "Success!");
-                        });
-                    } else {
-                        alert(response["error"], "Error");
+
+                send_request({
+                    post: true,
+                    url: "utilities/delete_post.php",
+                    data: {
+                        token: token,
+                        post_id: select("id", "post_select").js_object.value
+                    },
+                    callback: function (response) {
+                        if (response["error"] == undefined) {
+                            set_token(response["token"]);
+                            update_editor_context("edit_post", function () {
+                                alert("The post has been deleted.", "Success!");
+                            });
+                        } else {
+                            alert(response["error"], "Error");
+                        }
                     }
                 });
             }
@@ -404,13 +432,13 @@ function upload_image(callback) {
         }
     };
     request.upload.addEventListener("progress", function() {
-        var percent = (event.loaded / event.total * 100);
+        var percent = (event["loaded"] / event["total"] * 100);
         select("id", "progress_inner").js_object.setAttribute("style", "width: " + percent + "%");
     }, false);
     request.open("POST", "utilities/upload_image.php", true);
     request.setRequestHeader("X-File-Name", file.name);
     request.setRequestHeader("Content-Type", "application/octet-stream");
-    request.setRequestHeader("Token", token);
+    request.setRequestHeader("Token", token.toString());
     request.send(file);
 }
 
@@ -444,12 +472,17 @@ function is_ready() {
 }
 
 function login(password, callback) {
-    post("utilities/get_token.php", {"password": password}, true, function(response) {
-        if (response.error != undefined) {
-            alert(response.error);
-        } else {
-            set_token(response);
-            callback(response);
+    send_request({
+        post: true,
+        url: "utilities/get_token.php",
+        data: {password: password},
+        callback: function(response) {
+            if (response.error != undefined) {
+                alert(response.error);
+            } else {
+                set_token(response);
+                callback(response);
+            }
         }
     });
 }
@@ -459,11 +492,16 @@ function get_editor(password) {
         if (response) {
             select("id", "content").add_class("transparent");
             setTimeout(function() {
-                post("editor.html", {}, false, function(response) {
-                    var content = select("id", "content");
-                    content.js_object.innerHTML = response;
-                    content.remove_class("transparent");
-                    on_editor_load();
+                send_request({
+                    post: true,
+                    url: "editor.html",
+                    parse_json: false,
+                    callback: function(response) {
+                        var content = select("id", "content");
+                        content.js_object.innerHTML = response;
+                        content.remove_class("transparent");
+                        on_editor_load();
+                    }
                 });
             }, 500);
             close_alert();
@@ -484,13 +522,16 @@ function move_divider(e) {
 }
 
 function refresh_token(callback) {
-    post("utilities/refresh_token.php", {
-        "token": token
-    }, true, function(response) {
-        if (response["error"] == undefined) {
-            set_token(response["token"]);
-        } else {
-            alert(response["error"], "Error");
+    send_request({
+        post: true,
+        url: "utilities/refresh_token.php",
+        data: {token: token},
+        callback: function(response) {
+            if (response["error"] == undefined) {
+                set_token(response["token"]);
+            } else {
+                alert(response["error"], "Error");
+            }
         }
     });
 
