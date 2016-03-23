@@ -19,6 +19,8 @@ window.onload = function() {
             search_timer = setTimeout(function() {
                 window.location.hash = "2/search/" + e.srcElement.value;
             }, 500);
+        } else if (e.srcElement.value.length == 2) {
+            open_page("blog_page");
         }
     });
 };
