@@ -166,7 +166,9 @@ function load_posts(date) {
     });
 }
 
-function add_posts_to_element(posts, elem) {
+function add_posts_to_element(posts, elem, snippet) {
+    snippet = (snippet == undefined) ? false : snippet;
+
     for (var i in posts) {
         var post_div = document.createElement('div');
         post_div.className = "post";
@@ -199,6 +201,9 @@ function add_posts_to_element(posts, elem) {
         var content_div = document.createElement('div');
         content_div.className = "post_content";
         content_div.innerHTML = posts[i].content;
+        if (snippet) {
+            content_div.innerHTML = content_div.innerText.substr(0, 140).replace(/<\/br>/g, ' ').trim() + "...";
+        }
         content_div.appendChild(style_elem);
         post_div.appendChild(content_div);
 
@@ -287,7 +292,7 @@ function search_posts(query) {
                 no_items.innerText = "No results matched your search :(";
                 select("id", "search_page").js_object.appendChild(no_items);
             } else {
-                add_posts_to_element(response, select("id", "search_page"));
+                add_posts_to_element(response, select("id", "search_page"), true);
             }
         }
     });
