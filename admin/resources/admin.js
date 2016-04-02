@@ -77,7 +77,7 @@ function on_editor_load() {
     select("id", "day_select").js_object.addEventListener("change", on_date_change);
     select("id", "year_select").js_object.addEventListener("change", on_date_change);
 
-    select("id", "style_editor").addEventListener("keydown", function(e) {
+    select("id", "style_editor").js_object.addEventListener("keydown", function(e) {
         if (e.keyCode == 9) {
             e.preventDefault();
             var s = e.srcElement.selectionStart;
@@ -87,7 +87,7 @@ function on_editor_load() {
         }
     });
 
-    select("id", "style_editor").addEventListener("keyup", function(e) {
+    select("id", "style_editor").js_object.addEventListener("keyup", function(e) {
         select("id", "preview_style").js_object.innerHTML =
             e.srcElement.value.replace(/<current_post_id>/g, 0);
     });
@@ -298,9 +298,21 @@ function update_current_post() {
             button_callback: function () {
                 alert("", "Updating...", {show_cancel: false});
 
-                var date = select("id", "year_select").js_object.value
-                    + "-" + select("id", "month_select").js_object.value
-                    + "-" + select("id", "day_select").js_object.value;
+                var year = select("id", "year_select").js_object.value;
+                var month = select("id", "month_select").js_object.value;
+                var day  = select("id", "day_select").js_object.value;
+
+                var time = new Date();
+                var hour = time.getUTCHours().toString();
+                var minute = time.getUTCMinutes().toString();
+                var second = time.getUTCSeconds().toString();
+
+                var date_string = year + "-"
+                    + ("0" + month).substr(-2)
+                    + "-" + ("0" + day).substr(-2)
+                    + " " + ("0" + hour).substr(-2)
+                    + ":" + ("0" + minute).substr(-2)
+                    + ":" + ("0" + second).substr(-2);
 
                 send_request({
                     post: true,
@@ -312,7 +324,7 @@ function update_current_post() {
                         author: select("id", "author_select").js_object.value,
                         category: select("id", "category_select").js_object.value,
                         tags: select("id", "tags_input").js_object.value,
-                        date: date,
+                        date: date_string,
                         content: editor.getValue(),
                         style: select("id", "style_editor").js_object.value
                     },
@@ -340,10 +352,21 @@ function create_new_post() {
             button_callback: function() {
                 alert("", "Posting...", {show_cancel: false});
 
-                var date = new Date(select("id", "year_select").js_object.value
-                    + "-" + select("id", "month_select").js_object.value
-                    + "-" + select("id", "day_select").js_object.value);
-                date.setTime(new Date().getTime());
+                var year = select("id", "year_select").js_object.value;
+                var month = select("id", "month_select").js_object.value;
+                var day  = select("id", "day_select").js_object.value;
+
+                var time = new Date();
+                var hour = time.getUTCHours().toString();
+                var minute = time.getUTCMinutes().toString();
+                var second = time.getUTCSeconds().toString();
+
+                var date_string = year + "-"
+                    + ("0" + month).substr(-2)
+                    + "-" + ("0" + day).substr(-2)
+                    + " " + ("0" + hour).substr(-2)
+                    + ":" + ("0" + minute).substr(-2)
+                    + ":" + ("0" + second).substr(-2);
 
                 send_request({
                     post: true,
@@ -354,7 +377,7 @@ function create_new_post() {
                         author: select("id", "author_select").js_object.value,
                         category: select("id", "category_select").js_object.value,
                         tags: select("id", "tags_input").js_object.value,
-                        date: date.UTC(),
+                        date: date_string,
                         content: editor.getValue(),
                         style: select("id", "style_editor").js_object.value
                     },

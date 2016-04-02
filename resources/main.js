@@ -193,7 +193,13 @@ function add_posts_to_element(posts, elem, snippet) {
 
         var date_div = document.createElement('div');
         date_div.className = "post_date";
-        date_div.innerHTML = new Date(posts[i].date.substr(0, 10)).toLocaleDateString();
+
+        var date_info = posts[i].date.split(" ")[0].split("-");
+        var year = date_info[0];
+        var month = parseInt(date_info[1]) - 1;
+        var day = date_info[2];
+
+        date_div.innerHTML = new Date(year, month, day).toLocaleDateString();
         post_div.appendChild(date_div);
 
         var style = posts[i].style.replace(/<current_post_id>/g, posts[i].id);
