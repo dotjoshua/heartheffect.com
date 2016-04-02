@@ -22,7 +22,9 @@ function on_editor_load() {
     editor = CodeMirror.fromTextArea(select("id", "editor_textarea").js_object, {
         lineNumbers: true,
         styleActiveLine: true,
-        matchBrackets: true
+        matchBrackets: true,
+        mode:  "htmlmixed",
+        indentUnit: 4
     });
     editor.setOption("theme", "lesser-dark");
     editor.setSize("100%", "100%");
@@ -338,9 +340,10 @@ function create_new_post() {
             button_callback: function() {
                 alert("", "Posting...", {show_cancel: false});
 
-                var date = select("id", "year_select").js_object.value
+                var date = new Date(select("id", "year_select").js_object.value
                     + "-" + select("id", "month_select").js_object.value
-                    + "-" + select("id", "day_select").js_object.value;
+                    + "-" + select("id", "day_select").js_object.value);
+                date.setTime(new Date().getTime());
 
                 send_request({
                     post: true,
@@ -351,7 +354,7 @@ function create_new_post() {
                         author: select("id", "author_select").js_object.value,
                         category: select("id", "category_select").js_object.value,
                         tags: select("id", "tags_input").js_object.value,
-                        date: date,
+                        date: date.UTC(),
                         content: editor.getValue(),
                         style: select("id", "style_editor").js_object.value
                     },

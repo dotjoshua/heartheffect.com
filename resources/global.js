@@ -50,7 +50,7 @@ function close_alert() {
 function select(method, selector) {
     if (method == "id") {
         var js_object = document.getElementById(selector);
-        return js_object == undefined ? undefined : ƪ(js_object);
+        return js_object == undefined ? undefined : dom_object(js_object);
     }
 
     if (method == "class") {
@@ -58,14 +58,14 @@ function select(method, selector) {
         var js_objects = document.getElementsByClassName(selector);
 
         for (var i = 0; i < js_objects.length; i++) {
-            elements.push(new ƪ(js_objects[i]));
+            elements.push(new dom_object(js_objects[i]));
         }
 
         return elements;
     }
 }
 
-function ƪ(js_object) {
+function dom_object(js_object) {
     this.js_object = js_object;
     this.classes = this.js_object.className == undefined ? [] : this.js_object.className.split(" ");
 
