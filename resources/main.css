@@ -20,6 +20,14 @@ body {
     border-bottom: 1px solid #aa3f00;
 }
 
+#nav_inner {
+    width: 100%;
+    max-width: 1000px;
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .nav_item {
     cursor: pointer;
     display: inline-block;
@@ -41,17 +49,14 @@ body {
 }
 
 #search_input {
-    position: absolute;
-    right: 0;
-    top: 0;
     border: none;
-    padding: 6px 13px;
-    margin-top: 7px;
-    margin-right: 6px;
-    border-radius: 50px;
+    padding: 8px 13px;
     background: #333;
     color: #fff;
     font-size: 14px;
+    margin: 5px 0 0 0;
+    display: inline-block;
+    float: right;
 }
 
 .page {

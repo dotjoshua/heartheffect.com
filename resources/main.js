@@ -89,7 +89,7 @@ function load_pages() {
                 pages[i].content = request.responseText;
 
                 var page_divs = create_page_divs(pages[i]);
-                select("id", "nav").js_object.appendChild(page_divs[0]);
+                select("id", "nav_inner").js_object.appendChild(page_divs[0]);
                 select("id", "content").js_object.appendChild(page_divs[1]);
             }
 
@@ -239,7 +239,7 @@ function on_hash_change() {
             }
         }
     } else {
-        open_page("home_page");
+        open_page("hearth_page");
     }
 }
 

@@ -47,13 +47,10 @@
         margin: 0;
         border-radius: 0;
         box-sizing: border-box;
-    }
-
-    .nav_item {
-        padding-top: 38px;
+        padding: 12px 13px;
     }
 
     body {
-        padding-top: 70px;
+        padding-top: 90px;
     }
 }
