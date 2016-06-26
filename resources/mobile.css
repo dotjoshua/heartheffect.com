@@ -26,7 +26,7 @@
     }
 
     .show_nav {
-        transform: translateX(-200px) !important;
+        transform: translateX(-200px);
     }
 
     .show_nav + #content {
