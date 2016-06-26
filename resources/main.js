@@ -31,12 +31,12 @@ window.onload = function() {
     select("id", "mobile_toggle").js_object.addEventListener("touchstart", function(e) {
         var moved = false;
 
-        var nav = select("id", "nav");
+        var nav = document.getElementById("nav");
         var content = select("id", "content");
 
         var move_listener = function(e) {
             var displacement = Math.max((e.pageX - window.innerWidth), -200);
-            nav.js_object.style.transform = "translateX(" + displacement + "px)";
+            nav.style.transform = "translateX(" + displacement + "px)";
             content.js_object.style.transform = "translateX(" + displacement + "px)";
 
             moved = true;
@@ -44,10 +44,10 @@ window.onload = function() {
         };
 
         var end_listener = function(e) {
-            e.target.removeEventListener("touchmove", move_listener);
+            document.body.removeEventListener("touchmove", move_listener);
             e.target.removeEventListener("touchend", end_listener);
-            nav.js_object.style.transform = "";
-            nav.js_object.style.transition = "";
+            nav.style.transform = "";
+            nav.style.transition = "";
             content.js_object.style.transform = "";
             content.js_object.style.transition = "";
             if (moved) {
@@ -55,9 +55,9 @@ window.onload = function() {
             }
         };
 
-        e.target.addEventListener("touchmove", move_listener);
+        document.body.addEventListener("touchmove", move_listener);
         e.target.addEventListener("touchend", end_listener);
-        nav.js_object.style.transition = "none";
+        nav.style.transition = "none";
         content.js_object.style.transition = "none";
     });
 };

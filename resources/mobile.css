@@ -21,8 +21,16 @@
         display: block;
     }
 
+    #content {
+        transition: transform 0.5s;
+    }
+
     .show_nav {
         transform: translateX(-200px) !important;
+    }
+
+    .show_nav + #content {
+        transform: translateX(-200px);
     }
 
     #feed_page, #post_page, #search_page {
